@@ -1,6 +1,7 @@
 # backend
 
 ## Requirements
+* postgresql 11
 * python 3.7.3
 * django 2.2.1
 * djangorestframework 3.9.3
