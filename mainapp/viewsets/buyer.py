@@ -1,7 +1,14 @@
-from rest_framework import viewsets
+from rest_framework import serializers, viewsets
 
 from mainapp.models import Buyer
-from mainapp.serializers import BuyerSerializer
+
+
+class BuyerSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="mainapp:buyer-detail")
+
+    class Meta:
+        model = Buyer
+        fields = ('url', 'username', 'is_active', 'created', 'modified')
 
 
 class BuyerViewSet(viewsets.ModelViewSet):
