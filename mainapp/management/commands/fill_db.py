@@ -1,14 +1,13 @@
 from django.core.management.base import BaseCommand
 from mainapp.models import Buyer, Category, Item
+from django.conf import settings
 import os
 import json
-
-JSON_PATH = 'mainapp/json'
 
 
 # Загружаем из json файлов данные в базу
 def load_from_json(file_name):
-    with open(os.path.join(JSON_PATH, file_name + '.json'), 'r', encoding='utf-8') as infile:
+    with open(os.path.join(settings.BASE_DIR, 'mainapp', 'json', file_name + '.json'), 'r', encoding='utf-8') as infile:
         return json.load(infile)
 
 
@@ -16,22 +15,20 @@ class Command(BaseCommand):
     help = 'Fill DB new data'
 
     def handle(self, *args, **options):
-        # Создаем суперпользователя и подгружаем из файла пользователей по умолчанию
+        # Подгружаем из файлов суперпользователей (su) и пользователей (buyer)
+        superuser = load_from_json('su')
         buyers = load_from_json('buyers')
 
         Buyer.objects.all().delete()
 
-        # Создаем суперпользователя при помощи менеджера модели
-        _superuser = Buyer.objects.filter(username='admin').first()
-        if not _superuser:
-            Buyer.objects.create_superuser('admin', 'buylist.project@gmail.com', 'y1u2i3o4y1u2i3o4')
-            print('SU created')
+        # Создаем суперпользователей
+        for su in superuser:
+            Buyer.objects.create_superuser(**su)
+        print('SU created')
 
-        buyers_objs = []
+        # Создаем пользователей
         for buyer in buyers:
-            buyers_objs.append(Buyer(**buyer))
-
-        Buyer.objects.bulk_create(buyers_objs)
+            Buyer.objects.create_user(**buyer)
         print('Тестовые пользователи подгружены!')
 
         # Подгружаем категории товара из списка
