@@ -1,12 +1,12 @@
 [
     {
         "username": "tester",
-		"email": "buylist.project@gmail.com",
+		"email": "buylist.project+1@gmail.com",
 		"password": "testy1u2i3o4"
     },
 	{
         "username": "tester2",
-		"email": "buylist.project@gmail.com",
+		"email": "buylist.project+2@gmail.com",
 		"password": "testy1u2i3o4"
     }
 ]
