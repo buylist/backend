@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Овощи и фрукты",
+		"buyer": "tester"
+    },
+    {
+        "name": "Молочные продукты",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Бакалея",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Мясо",
+		"buyer": "tester"
+    },
+	{
+        "name": "Специи",
+		"buyer": "tester"
+    }
+]
