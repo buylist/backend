@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db import IntegrityError
 from rest_framework import serializers, viewsets, status
 from rest_framework.response import Response
 
@@ -27,7 +28,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         print(q.query)
         return q
 
-    def get_category_id(self, category_name):
+    def get_category(self, category_name):
         category = Category.objects.filter(buyer__in=(
             DEFAULT_USER, self.request.user,)).filter(name=category_name).order_by('-buyer').first()
         if not category:
@@ -39,30 +40,40 @@ class ItemViewSet(viewsets.ModelViewSet):
             category.save()
         return category
 
-    def get_item_id(self, item_name, category):
+    def get_item_id(self, item_name):
         item = Item.objects.filter(buyer__in=(
             DEFAULT_USER, self.request.user,)).filter(name=item_name).order_by('-buyer').first()
-        print(item.category, category, item.category == category)
-        if item.category != category:
-            item = None
-        if not item:
-            item = Item()
-            item.name = item_name
-            item.buyer = self.request.user
-            item.category = category
-            last_item = Item.objects.filter(buyer_id=item.buyer).order_by('-item_id').first()
-            item.item_id = last_item.item_id + 1 if last_item else 1
-            item.save()
-        return item
+        if item:
+            item_id = item.item_id
+        else:
+            item = Item.objects.filter(buyer__in=(DEFAULT_USER, self.request.user, )).order_by('-item_id').first()
+            item_id = item.item_id + 1
+        return item_id
 
     def create(self, request, *args, **kwargs):
+        category = self.get_category(request.data.get('category_name'))
+        item_id = self.get_item_id(request.data.get('name'))
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
         serializer.validated_data['buyer_id'] = request.user.pk
-        category = self.get_category_id(request.data.get('category_name'))
         serializer.validated_data['category_id'] = category.pk
-        item = self.get_item_id(request.data.get('name'), category)
-        serializer.validated_data['item_id'] = item.item_id
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        serializer.validated_data['item_id'] = item_id
+
+        try:
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except IntegrityError:
+            instance = Item.objects.filter(buyer__in=(
+                DEFAULT_USER, self.request.user,)).filter(item_id=item_id).order_by('-buyer').first()
+
+            serializer = self.get_serializer(instance=instance, data=request.data)
+            serializer.is_valid(raise_exception=True)
+
+            serializer.validated_data['category_id'] = category.pk
+
+            self.perform_update(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)

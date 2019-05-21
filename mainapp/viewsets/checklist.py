@@ -1,7 +1,9 @@
 from rest_framework import serializers, viewsets, status
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from mainapp.models import Checklist
+from mainapp.models import Checklist, ItemInChecklist
 
 
 class ChecklistSerializer(serializers.HyperlinkedModelSerializer):
@@ -10,6 +12,13 @@ class ChecklistSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Checklist
         fields = ('url', 'name', 'modified')
+
+
+class ItemInChecklistSerializer(serializers.HyperlinkedIdentityField):
+
+    class Meta:
+        model = ItemInChecklist
+        fields = ('quantity', 'unit')
 
 
 class ChecklistViewSet(viewsets.ModelViewSet):
@@ -37,3 +46,28 @@ class ChecklistViewSet(viewsets.ModelViewSet):
         else:
             print('we made an error here')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['get'], detail=True, permission_classes=[IsAuthenticated], url_name='items', url_path='items')
+    def list_items(self, request, checklist_id=None):
+
+        checklist = self.get_object()
+        items = checklist.iteminchecklist_set.prefetch_related('item__name').values()
+        print(items)
+        print(checklist, checklist.checklist_id, checklist.pk, checklist.name)
+        print('Checklist ID', checklist_id, request.data)
+
+        context = {'request': request}
+
+        serializer = ItemInChecklistSerializer(instance=items, many=True, context=context)
+
+        # print('here', serializer.initial_data)
+
+        return Response(serializer)
+
+    @action(methods=[], detail=True, url_name='add', url_path='add')
+    def add_item(self, request):
+        pass
+
+    @action(methods=[], detail=True, url_name='remove', url_path='remove')
+    def remove_item(self, request):
+        pass
