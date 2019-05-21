@@ -84,10 +84,17 @@ class Buyer(AbstractUser):
 
 
 class Category(models.Model):
+    category_id = models.IntegerField()
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
     name = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['buyer', 'category_id'], name='unique_category_id'),
+            models.UniqueConstraint(fields=['buyer', 'name'], name='unique_category_name')
+        ]
 
 
 class Checklist(models.Model):
@@ -97,6 +104,11 @@ class Checklist(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['buyer_id', 'checklist_id'], name='unique_checklist_id')
+        ]
+
 
 class Item(models.Model):
     item_id = models.IntegerField()
@@ -105,6 +117,12 @@ class Item(models.Model):
     name = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['buyer', 'item_id'], name='unique_item_id'),
+            models.UniqueConstraint(fields=['buyer', 'name'], name='unique_item_name')
+        ]
 
 
 class ItemInChecklist(models.Model):
