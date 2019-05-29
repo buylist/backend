@@ -1,0 +1,5 @@
+config.json
+test.py
+/venv
+.idea
+.gitignore
