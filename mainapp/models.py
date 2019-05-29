@@ -84,17 +84,14 @@ class Buyer(AbstractUser):
 
 
 class Category(models.Model):
-    category_id = models.IntegerField()
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
     name = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+    color = models.TextField(null=True)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['buyer', 'category_id'], name='unique_category_id'),
-            models.UniqueConstraint(fields=['buyer', 'name'], name='unique_category_name')
-        ]
+        unique_together = ('buyer', 'name')
 
 
 class Checklist(models.Model):
@@ -105,9 +102,7 @@ class Checklist(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['buyer_id', 'checklist_id'], name='unique_checklist_id')
-        ]
+        unique_together = ('buyer', 'name')  # Задаем уникальное сочетание для двух столбцов
 
 
 class Item(models.Model):
@@ -119,17 +114,14 @@ class Item(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['buyer', 'item_id'], name='unique_item_id'),
-            models.UniqueConstraint(fields=['buyer', 'name'], name='unique_item_name')
-        ]
+        unique_together = ('buyer', 'name')  # Задаем уникальное сочетание для двух столбцов
 
 
 class ItemInChecklist(models.Model):
-    checklist = models.ForeignKey(Checklist, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    checklist = models.ForeignKey(Checklist, related_name='items', on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, related_name='item_info', on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=12, decimal_places=4)
     unit = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-
+    delete = models.BooleanField(null=True)

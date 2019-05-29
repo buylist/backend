@@ -2,23 +2,19 @@ from rest_framework import serializers, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
+from django.db.utils import IntegrityError
 from mainapp.models import Checklist, ItemInChecklist
+from mainapp.viewsets.listitems import ItemInChecklistSerializer
 
 
 class ChecklistSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="mainapp:list-detail", lookup_field='checklist_id')
+    items = ItemInChecklistSerializer(many=True, required=False)
 
     class Meta:
         model = Checklist
-        fields = ('url', 'name', 'modified')
-
-
-class ItemInChecklistSerializer(serializers.HyperlinkedIdentityField):
-
-    class Meta:
-        model = ItemInChecklist
-        fields = ('quantity', 'unit')
+        fields = ('url', 'name', 'items')
+        # depth = 1
 
 
 class ChecklistViewSet(viewsets.ModelViewSet):
@@ -26,7 +22,8 @@ class ChecklistViewSet(viewsets.ModelViewSet):
     lookup_field = 'checklist_id'
 
     def get_queryset(self):
-        return Checklist.objects.filter(buyer=self.request.user).order_by('-modified')
+        chek = Checklist.objects.all().prefetch_related('items').filter(buyer_id=self.request.user.id)
+        return chek
 
     def update(self, request, *args, **kwargs):
         serializer_context = {
@@ -47,27 +44,18 @@ class ChecklistViewSet(viewsets.ModelViewSet):
             print('we made an error here')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=['get'], detail=True, permission_classes=[IsAuthenticated], url_name='items', url_path='items')
-    def list_items(self, request, checklist_id=None):
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        print(serializer.validated_data)
+        serializer.validated_data['buyer_id'] = request.user.pk
+        serializer.validated_data['checklist_id'] = request.data['checklist_id']
+        try:
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except IntegrityError as e:
+            print('ОШИБКА ЗАПИСИ В БАЗУ ДАННЫХ')
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": f"{e}"})
 
-        checklist = self.get_object()
-        items = checklist.iteminchecklist_set.prefetch_related('item__name').values()
-        print(items)
-        print(checklist, checklist.checklist_id, checklist.pk, checklist.name)
-        print('Checklist ID', checklist_id, request.data)
-
-        context = {'request': request}
-
-        serializer = ItemInChecklistSerializer(instance=items, many=True, context=context)
-
-        # print('here', serializer.initial_data)
-
-        return Response(serializer)
-
-    @action(methods=[], detail=True, url_name='add', url_path='add')
-    def add_item(self, request):
-        pass
-
-    @action(methods=[], detail=True, url_name='remove', url_path='remove')
-    def remove_item(self, request):
-        pass

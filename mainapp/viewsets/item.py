@@ -1,8 +1,8 @@
 from django.conf import settings
-from django.db import IntegrityError
+from django.db.utils import IntegrityError
 from rest_framework import serializers, viewsets, status
 from rest_framework.response import Response
-
+import json
 from mainapp.models import Item, Category
 
 
@@ -11,11 +11,12 @@ DEFAULT_USER = settings.CONFIG.get('DEFAULT_USER_ID', 0)
 
 class ItemSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="mainapp:item-detail", lookup_field='item_id')
+    # buyer_id = serializers.IntegerField()  #  По умолчанию эти поля только для чтения и не дает в них ниче записать
+    # category_id = serializers.IntegerField() # А если их переопределить таким образом, то нормльно записывает...
 
     class Meta:
         model = Item
-        # fields = ('url', 'name', 'quantity', 'unit', 'checklist', 'modified',)
-        fields = ('url', 'name', 'modified',)
+        fields = ('url', 'item_id', 'name', 'buyer_id', 'category_id')
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -50,30 +51,41 @@ class ItemViewSet(viewsets.ModelViewSet):
             item_id = item.item_id + 1
         return item_id
 
-    def create(self, request, *args, **kwargs):
-        category = self.get_category(request.data.get('category_name'))
-        item_id = self.get_item_id(request.data.get('name'))
+    def perform_create(self, serializer):
+        serializer.save()
 
+    def create(self, request, *args, **kwargs):
+
+        category = self.get_category(request.data.get('category_name'))
+        item_id = self.get_item_id(request.data.get('item_id'))
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         serializer.validated_data['buyer_id'] = request.user.pk
         serializer.validated_data['category_id'] = category.pk
         serializer.validated_data['item_id'] = item_id
+        serializer.validated_data['name'] = request.data['name']
 
         try:
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        except IntegrityError:
-            instance = Item.objects.filter(buyer__in=(
-                DEFAULT_USER, self.request.user,)).filter(item_id=item_id).order_by('-buyer').first()
+        except IntegrityError as e:
+            print('ОШИБКА ЗАПИСИ В БАЗУ ДАННЫХ')
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": f"{e}"})
 
-            serializer = self.get_serializer(instance=instance, data=request.data)
-            serializer.is_valid(raise_exception=True)
+    def partial_update(self, request, *args, **kwargs):
+        print('*****МЕТОД АПДЕЙТ*****')
+        print(kwargs)
+        pk = kwargs.get('item_id')
+        instance = Item.objects.filter(pk=pk).first()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
 
-            serializer.validated_data['category_id'] = category.pk
-
+        try:
             self.perform_update(serializer)
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except IntegrityError as e:
+            print('ОШИБКА ЗАПИСИ В БАЗУ ДАННЫХ')
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": f"{e}"})
