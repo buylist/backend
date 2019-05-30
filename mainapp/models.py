@@ -111,7 +111,17 @@ class ItemInChecklist(models.Model):
     checklist = models.ForeignKey(Checklist, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=12, decimal_places=4)
-    unit = models.TextField(null=True, blank=True)
+    unit = models.TextField(default='', blank=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+    value = models.DecimalField(verbose_name='стоимость выбранного количества', max_digits=8, decimal_places=2, blank=True)
 
+
+class FromWebProdFields(models.Model):
+    prod_name = models.CharField(verbose_name='название товара', max_length=128)
+    web_prod_name = models.CharField(verbose_name='название товара в каталогах сайтов', max_length=128, blank=True)
+    price = models.DecimalField(verbose_name='цена продукта', max_digits=8, decimal_places=2, blank=False)
+    measure = models.CharField(verbose_name='измерение', max_length=2, blank=True)
+    volume = models.CharField(verbose_name='объем упаковки', max_length=2, blank=True)
+    picture = models.CharField(verbose_name='адрес_фотографии', max_length=256, blank=True)
+    source = models.CharField(verbose_name='источник данных', max_length=256, blank=True)
