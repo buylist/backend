@@ -1,0 +1,13 @@
+[
+    {
+        "adr": "https://www.perekrestok.ru/catalog/search",
+        "search_exp": "text=",
+        "semantic_dist": 10,
+        "reg_expr": {
+            "price": "[0-9]{1,5}[,.]{1}[0-9]{2}[рубРУБRURrur]{0,3}",
+            "measure": "^[гкштуплмГКШТУПЛМ]{1,2}$",
+            "volume": "[0-9]{1,4}[гкштуплмГКШТУПЛМ]{1,2}",
+            "prod_name": "[А-Яа-яA-Za-z]+"
+        }
+    }
+]
