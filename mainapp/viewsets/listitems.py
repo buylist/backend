@@ -33,49 +33,29 @@ class ChangeItemInChecklistSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ItemlistViewSet(viewsets.ModelViewSet):
+    queryset = ItemInChecklist.objects.all()
     serializer_class = ChangeItemInChecklistSerializer
     lookup_field = 'pk'
-
-    def perform_create(self, serializer):
-        serializer.save()
 
     def create(self, request, *args, **kwargs):
         data = request.data
         print(data)
-        item = Item.objects.filter(buyer_id=self.request.user.pk).filter(name=data['item']).first()
-        print(item.id, item.pk, item.name)
-        checklist = Checklist.objects.filter(buyer_id=self.request.user.pk).filter(name=data['checklist']).first()
-        print(checklist.id, checklist.pk, checklist.name)
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        print(f'Cерилизатор => {serializer}')
-        print(f'Валидатная дата => {serializer.validated_data}')
-        serializer.validated_data['item_id'] = item.id
-        serializer.validated_data['checklist_id'] = checklist.id
-
         try:
+            item = Item.objects.filter(buyer_id=self.request.user.pk).filter(name=data['item']).first()
+            checklist = Checklist.objects.filter(buyer_id=self.request.user.pk).filter(name=data['checklist']).first()
+
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+
+            serializer.validated_data['item_id'] = item.id
+            serializer.validated_data['checklist_id'] = checklist.id
+
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        except IntegrityError as e:
+        except Exception as e:
             print('ОШИБКА ЗАПИСИ В БАЗУ ДАННЫХ')
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": f"{e}"})
 
-    def partial_update(self, request, *args, **kwargs):
-        print('*****МЕТОД АПДЕЙТ*****')
-        print(kwargs)
-        pk = kwargs.get('pk')
-        instance = ItemInChecklist.objects.filter(pk=pk).first()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
 
-        try:
-            self.perform_update(serializer)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        except IntegrityError as e:
-            print('ОШИБКА ЗАПИСИ В БАЗУ ДАННЫХ')
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": f"{e}"})
 

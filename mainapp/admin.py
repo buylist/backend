@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from mainapp.models import Buyer
+from mainapp.models import Buyer, ItemInChecklist, Item, Category, Checklist
 
 # Register your models here.
 
@@ -54,10 +54,22 @@ class UserChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 
+class ItemsChangeForm(admin.ModelAdmin):
+
+    list_display = [
+        'pk', 'buyer', 'name', 'category',
+        'created', 'modified'
+    ]
+
+    list_filter = [
+        'category',
+        'created', 'modified'
+    ]
+
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
-    add_form = UserCreationForm
+    add_form = UserCreationForm, ItemsChangeForm
 
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
@@ -84,6 +96,7 @@ class UserAdmin(BaseUserAdmin):
 
 # Now register the new UserAdmin...
 admin.site.register(Buyer, UserAdmin)
+admin.site.register(Item, ItemsChangeForm)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
