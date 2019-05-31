@@ -54,30 +54,11 @@ def transform_str_to_decimals(str_obj):
 
 def find_fields(product, prod_fields, available_list_of_fields, reg_expr, semantic_distance=10):
     prod = product.lower()
-    # prod_alt_1 = product
-    # prod_alt_2 = product.capitalize()
-    # prod_alt_3 = product.upper()
 
     prod_name_parts = prod.split(' ')
 
-    # prod_name_parts_0 = prod.split(' ')
-    # prod_name_parts_0[0] = prod_name_parts_0[0].capitalize()
-
-    # prod_name_parts_1 = prod_alt_1.split(' ')
-    # prod_name_parts_2 = prod_alt_2.split(' ')
-    # prod_name_parts_3 = prod_alt_3.split(' ')
-    #
-    # prod_name_parts_4 = prod_alt_1.split(' ')
-    # for i, p in enumerate(prod_name_parts_4):
-    #     prod_name_parts_4[i] = p.capitalize()
-
     vers_of_splited_pn = [
         prod_name_parts,
-        # prod_name_parts_0,
-        # prod_name_parts_1,
-        # prod_name_parts_2,
-        # prod_name_parts_3,
-        # prod_name_parts_4
     ]
 
     ind = 0
@@ -192,7 +173,6 @@ def del_tag_content(text, open='<', close='>'):
     close_tag = True
 
     res = ''
-    temp = str('')
 
     for i, letter in enumerate(text):
         if letter == open:
@@ -210,44 +190,7 @@ def del_tag_content(text, open='<', close='>'):
 
                 res += str(letter)
 
-
     return res
-
-
-def separate(text, container, open='<', close='>', exceptions=[]):
-
-    open_tag = False
-    close_tag = True
-
-    temp = str('')
-
-    for i, letter in enumerate(text):
-        if letter == open:
-            open_tag = True
-            close_tag = False
-        if letter == close:
-            close_tag = True
-            open_tag = False
-        if open_tag and not close_tag:
-            pass
-        else:
-            if letter == ' ' or letter == open or letter == close:
-                if len(temp) > 0:
-                    if temp not in exceptions:
-                        container.append(temp)
-                    temp = ''
-                else:
-                    pass
-            elif i == len(text) - 1:
-                temp += str(letter)
-                if temp not in exceptions:
-                    container.append(temp)
-                else:
-                    pass
-            else:
-                temp += str(letter)
-
-    return container
 
 
 class Parser():

@@ -114,7 +114,8 @@ class ItemInChecklist(models.Model):
     unit = models.TextField(default='', blank=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    value = models.DecimalField(verbose_name='стоимость выбранного количества', max_digits=8, decimal_places=2, blank=True)
+    value = models.DecimalField(verbose_name='стоимость выбранного количества', max_digits=8, decimal_places=2,
+                                blank=True, default=0)
 
 
 class FromWebProdFields(models.Model):
