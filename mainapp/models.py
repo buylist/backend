@@ -66,6 +66,7 @@ class ItemInChecklist(models.Model):
     value = models.DecimalField(verbose_name='стоимость выбранного количества', max_digits=8, decimal_places=2,
                                 blank=True, default=0)
 
+
 class FromWebProdFields(models.Model):
     prod_name = models.CharField(verbose_name='название товара', max_length=128)
     web_prod_name = models.CharField(verbose_name='название товара в каталогах сайтов', max_length=128, blank=True)
