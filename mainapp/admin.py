@@ -6,6 +6,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from mainapp.models import Buyer, ItemInChecklist, Item, Category, Checklist
 
+
 # Register your models here.
 
 
@@ -54,22 +55,44 @@ class UserChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 
+class ItemInline(admin.TabularInline):
+    model = Item
+    # fieldsets = (
+    #     (None, {'fields': ('pk', 'name', 'buyer')}),
+    # )
+
+
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'name', 'color', 'created', 'modified']
+    list_filter = ['name', 'color', 'modified']
+    search_fields = ['name']
+    fieldsets = (
+        (None, {
+            'fields': (('name', 'color',),)
+        }
+         ),
+    )
+    filter_horizontal = ()
+
+    inlines = [ItemInline, ]
+
+
+class ItemInCheckListAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'checklist_id', 'quantity', 'item_id', 'modified', 'deleted', 'value']
+    list_filter = ['checklist_id', 'modified', 'modified', 'deleted']
+    search_fields = ['checklist_id']
+
+
 class ItemsChangeForm(admin.ModelAdmin):
+    list_display = ['pk', 'buyer', 'name', 'category', 'created', 'modified']
+    list_filter = ['category', 'created', 'modified']
+    search_fields = ['name']
 
-    list_display = [
-        'pk', 'buyer', 'name', 'category',
-        'created', 'modified'
-    ]
-
-    list_filter = [
-        'category',
-        'created', 'modified'
-    ]
 
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
-    add_form = UserCreationForm, ItemsChangeForm
+    add_form = UserCreationForm
 
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
@@ -87,7 +110,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': ('username', 'email', 'password1', 'password2')}
-        ),
+         ),
     )
     search_fields = ('email',)
     ordering = ('email',)
@@ -97,6 +120,8 @@ class UserAdmin(BaseUserAdmin):
 # Now register the new UserAdmin...
 admin.site.register(Buyer, UserAdmin)
 admin.site.register(Item, ItemsChangeForm)
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(ItemInChecklist, ItemInCheckListAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)

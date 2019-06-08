@@ -22,7 +22,7 @@ def get_token():
     return r.json()
 
 
-# print(get_token())
+print(get_token())
 '''
 {'token': '80029d4e0d7ed1833a605e00c1335db9472ef5ff'}
 '''
@@ -128,7 +128,7 @@ def get_lists():
     return r.json()
 
 
-# pprint.pprint(get_lists())
+pprint.pprint(get_lists())
 '''
 [{'items': [{'item': {'buyer_id': 2,
                       'category_id': 1,
@@ -346,7 +346,7 @@ def delete_item_from_list():
     return r.status_code
 
 
-pprint.pprint(delete_item_from_list())
+# pprint.pprint(delete_item_from_list())
 '''
 <Response [204]>
 '''
