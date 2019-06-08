@@ -1,0 +1,217 @@
+[
+    {
+        "name": "Картофель",
+		"category": "Овощи и фрукты",
+		"buyer": "tester"
+    },
+    {
+        "name": "Морковь",
+		"category": "Овощи и фрукты",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Лук",
+		"category": "Овощи и фрукты",
+		"buyer": "tester"
+    },
+    {
+        "name": "Чеснок",
+		"category": "Овощи и фрукты",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Петрушка",
+		"category": "Овощи и фрукты",
+		"buyer": "tester"
+    },
+    {
+        "name": "Укроп",
+		"category": "Овощи и фрукты",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Яблоки",
+		"category": "Овощи и фрукты",
+		"buyer": "tester"
+    },
+    {
+        "name": "Лимон",
+		"category": "Овощи и фрукты",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Бананы",
+		"category": "Овощи и фрукты",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Огурцы",
+		"category": "Овощи и фрукты",
+		"buyer": "tester"
+    },
+    {
+        "name": "Томаты",
+		"category": "Овощи и фрукты",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Гречневая крупа",
+		"category": "Бакалея",
+		"buyer": "tester"
+    },
+    {
+        "name": "Перловая крупа",
+		"category": "Бакалея",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Рис",
+		"category": "Бакалея",
+		"buyer": "tester"
+    },
+    {
+        "name": "Овсяные хлопья",
+		"category": "Бакалея",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Манка",
+		"category": "Бакалея",
+		"buyer": "tester"
+    },
+    {
+        "name": "Кукурузная крупа",
+		"category": "Бакалея",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Спагетти",
+		"category": "Бакалея",
+		"buyer": "tester"
+    },
+    {
+        "name": "Макароны",
+		"category": "Бакалея",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Горох",
+		"category": "Бакалея",
+		"buyer": "tester"
+    },
+    {
+        "name": "Фасоль",
+		"category": "Бакалея",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Панировочные сухари",
+		"category": "Бакалея",
+		"buyer": "tester"
+    },
+    {
+        "name": "Кофе растворимый",
+		"category": "Бакалея",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Чай черный",
+		"category": "Бакалея",
+		"buyer": "tester"
+    },
+    {
+        "name": "Чай зеленый",
+		"category": "Бакалея",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Какао порошок",
+		"category": "Бакалея",
+		"buyer": "tester"
+    },
+    {
+        "name": "Майонез",
+		"category": "Бакалея",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Кетчуп",
+		"category": "Бакалея",
+		"buyer": "tester"
+    },
+    {
+        "name": "Мука",
+		"category": "Бакалея",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Курица",
+		"category": "Мясо",
+		"buyer": "tester"
+    },
+    {
+        "name": "Куриное филе",
+		"category": "Мясо",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Говядина",
+		"category": "Мясо",
+		"buyer": "tester"
+    },
+    {
+        "name": "Индейка",
+		"category": "Мясо",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Свинина",
+		"category": "Мясо",
+		"buyer": "tester"
+    },
+	{
+        "name": "Ваниль",
+		"category": "Специи",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Корица",
+		"category": "Специи",
+		"buyer": "tester"
+    },
+	{
+        "name": "Карри",
+		"category": "Специи",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Черный перец",
+		"category": "Специи",
+		"buyer": "tester"
+    },
+	{
+        "name": "Красный перец",
+		"category": "Специи",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Соль",
+		"category": "Специи",
+		"buyer": "tester"
+    },
+	{
+        "name": "Паприка",
+		"category": "Специи",
+		"buyer": "tester2"
+    },
+	{
+        "name": "Куркума",
+		"category": "Специи",
+		"buyer": "tester"
+    },
+	{
+        "name": "Лавровый лист",
+		"category": "Специи",
+		"buyer": "tester2"
+    }
+]
