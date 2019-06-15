@@ -57,7 +57,7 @@ class ItemViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             category = self.get_category(request.data.get('category_name'))
-            item_id = self.get_item_id(request.data.get('item_id'))
+            # item_id = self.get_item_id(request.data.get('item_id'))
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             print(serializer)

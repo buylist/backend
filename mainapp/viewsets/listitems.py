@@ -29,7 +29,7 @@ class ChangeItemInChecklistSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ItemInChecklist
-        fields = ('url', 'quantity', 'unit', 'item_id', 'checklist_id', 'modified', 'delete')
+        fields = ('url', 'quantity', 'unit', 'item_id', 'checklist_id', 'modified', 'deleted', 'value')
 
 
 class ItemlistViewSet(viewsets.ModelViewSet):
@@ -49,7 +49,7 @@ class ItemlistViewSet(viewsets.ModelViewSet):
 
             serializer.validated_data['item_id'] = item.id
             serializer.validated_data['checklist_id'] = checklist.id
-
+            print(serializer.validated_data)
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
