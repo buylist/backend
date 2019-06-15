@@ -16,9 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.authtoken import views
+from django.conf.urls import url, include
+from django.http import HttpResponse
+from social_django.models import UserSocialAuth
+
+def profile_view(request):
+    token_info = UserSocialAuth.objects.first()
+    return HttpResponse(token_info)
+
 
 urlpatterns = [
     path('api/token/', views.obtain_auth_token),
     path('', include('mainapp.urls', namespace='mainapp')),
     path('admin/', admin.site.urls),
+    url(r'^auth/', include('social_django.urls', namespace='social')),
+    url(r'^accounts/profile/$', profile_view),
 ]
