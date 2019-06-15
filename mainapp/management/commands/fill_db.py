@@ -16,19 +16,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Подгружаем из файлов суперпользователей (su) и пользователей (buyer)
-        su_data = settings.CONFIG.get('SUPERUSER', {})
-        superuser = {
-                'username': su_data.get('USERNAME', 'admin'),
-                'email': su_data.get('EMAIL', 'buylist.project@gmail.com'),
-                'password': su_data.get('PASSWORD', 'y1u2i3o4y1u2i3o4')
-        }
-
+        superuser = load_from_json('su')
         buyers = load_from_json('buyers')
 
         Buyer.objects.all().delete()
 
-        # Создаем суперпользователя
-        Buyer.objects.create_superuser(**superuser)
+        # Создаем суперпользователей
+        for su in superuser:
+            Buyer.objects.create_superuser(**su)
         print('SU created')
 
         # Создаем пользователей
