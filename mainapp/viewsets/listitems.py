@@ -1,12 +1,8 @@
 from rest_framework import serializers, viewsets, status
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.conf import settings
-from mainapp.models import ItemInChecklist, Checklist, Category, Item
-from mainapp.viewsets.category import CategoryViewSet
+from mainapp.models import ItemInChecklist, Checklist, Item
 from mainapp.viewsets.item import ItemSerializer
-from django.db.utils import IntegrityError
 
 
 DEFAULT_USER = settings.CONFIG.get('DEFAULT_USER_ID', 0)
@@ -19,7 +15,7 @@ class ItemInChecklistSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ItemInChecklist
-        fields = ('url', 'quantity', 'unit', 'item', 'delete')
+        fields = ('url', 'quantity', 'unit', 'item', 'deleted')
         depth = 1
 
 

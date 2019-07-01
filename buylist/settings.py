@@ -31,6 +31,7 @@ SECRET_KEY = CONFIG.get('SECRET_KEY', 'very_secret_key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG.get('DEBUG', False)
 
+# ALLOWED_HOSTS = ['35.228.148.217']
 ALLOWED_HOSTS = CONFIG.get('ALLOWED_HOSTS', [])
 
 
