@@ -12,7 +12,7 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('url', 'name', 'modified', 'color')
+        fields = ('url', 'name', 'modified', 'color', 'mobile_category_id')
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -20,9 +20,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     lookup_field = 'pk'
 
     def get_queryset(self):
-        return Category.objects.filter(
-            buyer__in=(self.request.user, DEFAULT_USER,)
-        ).order_by('name', '-buyer').distinct('name')
+        return Category.objects.filter(buyer_id=self.request.user.pk)
+        # return Category.objects.filter(
+        #     buyer__in=(self.request.user, DEFAULT_USER,)
+        # ).order_by('name', '-buyer').distinct('name')
 
     def create(self, request, *args, **kwargs):
         print(request.data)

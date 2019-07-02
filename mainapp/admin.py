@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from mainapp.models import Buyer, ItemInChecklist, Item, Category, Checklist
+from mainapp.models import Buyer, ItemInChecklist, Item, Category, Checklist, FromWebProdFields
 
 
 # Register your models here.
@@ -63,7 +63,7 @@ class ItemInline(admin.TabularInline):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'name', 'color', 'created', 'modified']
+    list_display = ['pk', 'mobile_category_id', 'name', 'color', 'created', 'modified']
     list_filter = ['name', 'color', 'modified']
     search_fields = ['name']
     fieldsets = (
@@ -78,13 +78,25 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ItemInCheckListAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'checklist_id', 'quantity', 'item_id', 'modified', 'deleted', 'value']
+    list_display = ['pk', 'checklist_id', 'quantity', 'unit', 'item_id', 'display_item', 'modified', 'deleted', 'value']
     list_filter = ['checklist_id', 'modified', 'modified', 'deleted']
     search_fields = ['checklist_id']
 
 
+class FromWebProdFieldsAdmin(admin.ModelAdmin):
+    list_display = ['prod_name', 'web_prod_name', 'price', 'measure', 'volume']
+    list_filter = ['prod_name', 'measure']
+    search_fields = ['prod_name']
+
+
+class CheckListAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'checklist_id', 'buyer', 'name', 'modified', 'created']
+    list_filter = ['buyer', 'name']
+    search_fields = ['name']
+
+
 class ItemsChangeForm(admin.ModelAdmin):
-    list_display = ['pk', 'buyer', 'name', 'category', 'created', 'modified']
+    list_display = ['pk', 'item_id', 'buyer', 'name', 'category', 'created', 'modified']
     list_filter = ['category', 'created', 'modified']
     search_fields = ['name']
 
@@ -122,6 +134,8 @@ admin.site.register(Buyer, UserAdmin)
 admin.site.register(Item, ItemsChangeForm)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(ItemInChecklist, ItemInCheckListAdmin)
+admin.site.register(Checklist, CheckListAdmin)
+admin.site.register(FromWebProdFields, FromWebProdFieldsAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)

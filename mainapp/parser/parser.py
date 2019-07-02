@@ -219,10 +219,14 @@ class Parser():
 
                 clear_data = [i.lower() for i in clear_data]
 
+                print(f"\nThis is clear_data:\n {clear_data}\n")
+
                 self.dict[www['adr']][prod] = []
 
                 found = find_fields(prod, self.prod_fields, clear_data, www['reg_expr'],
                                     semantic_distance=www['semantic_dist'])
+
+                print(f"\nThis is found:\n {found}\n")
 
                 if 'NO_FULL_MATCH' not in found:
                     found = found.values()
@@ -287,7 +291,7 @@ class Parser():
                 setattr(obj, 'value', min(apropriate_values))
                 obj.save()
             except ValueError:
-                print(f'CANNOT ESTIMATE VALUE FOE item.name {obj.name}: NO SOURCE IN FromWebProdFields')
+                print(f'CANNOT ESTIMATE VALUE FOE item.name {obj.item.name}: NO SOURCE IN FromWebProdFields')
 
     @classmethod
     def django_models_clear_db(cls, class_model):
@@ -305,7 +309,7 @@ class Parser():
 
 
 if __name__ == '__main__':
-    products = ['чипсы lays', 'крабовые палочки', 'капуста белокочанная']
+    products = ['лимон']
 
     web_config = [
         {

@@ -84,6 +84,7 @@ class Buyer(AbstractUser):
 
 
 class Category(models.Model):
+    mobile_category_id = models.IntegerField(default=0)
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
     name = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
@@ -102,7 +103,7 @@ class Checklist(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ('buyer', 'name')  # Задаем уникальное сочетание для двух столбцов
+        unique_together = ('buyer', 'name')
 
 
 class Item(models.Model):
@@ -127,6 +128,11 @@ class ItemInChecklist(models.Model):
     deleted = models.NullBooleanField(null=True, blank=True)
     value = models.DecimalField(verbose_name='стоимость выбранного количества', max_digits=8, decimal_places=2,
                                 blank=True, default=0)
+
+    def display_item(self):
+        return self.item.name
+
+    display_item.short_description = 'Name of item'
 
 
 class FromWebProdFields(models.Model):
