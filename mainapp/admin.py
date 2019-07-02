@@ -21,6 +21,10 @@ class UserCreationForm(forms.ModelForm):
         fields = ('email', 'username')
 
     def clean_password2(self):
+        """
+
+        :return:
+        """
         # Check that the two password entries match
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
@@ -29,6 +33,11 @@ class UserCreationForm(forms.ModelForm):
         return password2
 
     def save(self, commit=True):
+        """
+
+        :param commit:
+        :return:
+        """
         # Save the provided password in hashed format
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
@@ -49,6 +58,10 @@ class UserChangeForm(forms.ModelForm):
         fields = ('username', 'email', 'password', 'is_active', 'is_admin')
 
     def clean_password(self):
+        """
+
+        :return:
+        """
         # Regardless of what the user provides, return the initial value.
         # This is done here, rather than on the field, because the
         # field does not have access to the initial value

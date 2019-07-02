@@ -78,7 +78,7 @@ def get_categories():
 def add_category():
     url = 'http://35.228.148.217:8000/api/v1/categories/'
     r = requests.post(url, headers={"Authorization": "Token 9c65603928b743c64480e88dea77a50fd90f3f41"}, json={
-        'name': 'Овощи',
+        'name': 'Продукты',
         'color': 'green'
     })
     print(r)
@@ -86,8 +86,9 @@ def add_category():
 
 
 # pprint.pprint(add_category())
+# '''
+# <Response [201]>
 '''
-<Response [201]>
 {'color': 'green',
  'modified': '2019-05-29T06:47:14.665436Z',
  'name': 'Мясо',
@@ -178,8 +179,8 @@ def get_lists():
 def add_list():
     url = 'http://35.228.148.217:8000/api/v1/lists/'
     r = requests.post(url, headers={"Authorization": "Token 9c65603928b743c64480e88dea77a50fd90f3f41"}, json={
-        'name': '8марта',
-        'checklist_id': 112
+        'name': 'ДР',
+        'checklist_id': 117
     })
     print(r)
     return r.json()
@@ -247,8 +248,8 @@ def get_items():
 def add_items():
     url = 'http://35.228.148.217:8000/api/v1/items/'
     r = requests.post(url, headers={"Authorization": "Token 9c65603928b743c64480e88dea77a50fd90f3f41"}, json={
-        'name': 'Cola',
-        'category_name': 'СпортПИТ',
+        'name': 'Пельмеши',
+        'category_name': 'Продукты',
         'item_id': 653
     })
     print(r)
@@ -299,12 +300,12 @@ def delete_item():
 
 
 def add_item_in_checklist():
-    url = f'http://{TEST_URL}/api/v1/checklists/'
-    r = requests.post(url, headers={"Authorization": TEST_TOKEN}, json={
-        'item': 'Apple',
-        'checklist': 'день рождения',
+    url = f'http://{PROD_URL}/api/v1/checklists/'
+    r = requests.post(url, headers={"Authorization": PROD_TOKEN}, json={
+        'item': 'Пельмеши',
+        'checklist': '8марта',
         'deleted': True,
-        'quantity': 8,
+        'quantity': 4,
         'unit': 'шт'
     })
     print(r)
@@ -333,7 +334,7 @@ def update_item_in_checklist():
     return r.json()
 
 
-pprint.pprint(update_item_in_checklist())
+# pprint.pprint(update_item_in_checklist())
 '''
 {'checklist_id': 4,
  'delete': True,
@@ -358,4 +359,120 @@ def delete_item_from_list():
 '''
 
 
+def get_pattern():
+    url = 'http://127.0.0.1:8000/api/v1/pattern/'
+    r = requests.get(url, headers={"Authorization": "Token 80029d4e0d7ed1833a605e00c1335db9472ef5ff"})
+    print(r)
+    return r.json()
 
+
+# pprint.pprint(get_pattern())
+
+
+def add_pattern():
+    """
+    <Response [201]>
+    {'name': 'Test_pattern', 'url': 'http://127.0.0.1:8000/api/v1/pattern/1/'}
+    """
+    url = 'http://127.0.0.1:8000/api/v1/pattern/'
+    r = requests.post(url, headers={"Authorization": "Token 80029d4e0d7ed1833a605e00c1335db9472ef5ff"}, json={
+        'name': 'Test_pattern',
+        'mobile_id': 117117
+    })
+    print(r)
+    return r.json()
+
+# pprint.pprint(add_pattern())
+
+
+def add_item_in_pattern():
+    url = f'http://{TEST_URL}/api/v1/pattern_item/'
+    r = requests.post(url, headers={"Authorization": "Token 80029d4e0d7ed1833a605e00c1335db9472ef5ff"}, json={
+        'item': 'Water',
+        'pattern': 'Test_pattern',
+        'deleted': False,
+        'quantity': 6,
+        'unit': 'шт'
+    })
+    print(r)
+    return r.json()
+# pprint.pprint(add_item_in_pattern())
+
+
+def update_item_in_pattern():
+    url = 'http://127.0.0.1:8000/api/v1/pattern_item/3/'
+    r = requests.patch(url, headers={"Authorization": TEST_TOKEN}, json={
+        'deleted': True,
+    })
+    print(r)
+    return r.json()
+# pprint.pprint(update_item_in_pattern())
+
+
+def delete_item_from_pattern():
+    url = 'http://127.0.0.1:8000/api/v1/pattern_item/3/'
+    r = requests.delete(url, headers={"Authorization": TEST_TOKEN})
+    print(r)
+    return r.status_code
+
+# pprint.pprint(delete_item_from_pattern())
+
+
+def get_reciept():
+    url = 'http://127.0.0.1:8000/api/v1/reciept/'
+    r = requests.get(url, headers={"Authorization": "Token 80029d4e0d7ed1833a605e00c1335db9472ef5ff"})
+    print(r)
+    return r.json()
+
+
+pprint.pprint(get_reciept())
+
+
+def add_reciept():
+    """
+    <Response [201]>
+    {'name': 'Test_pattern', 'url': 'http://127.0.0.1:8000/api/v1/pattern/1/'}
+    """
+    url = 'http://127.0.0.1:8000/api/v1/reciept/'
+    r = requests.post(url, headers={"Authorization": "Token 80029d4e0d7ed1833a605e00c1335db9472ef5ff"}, json={
+        'name': 'Test_reciept',
+        'mobile_id': 1445517,
+        'description': 'Это рецепт борща'
+    })
+    print(r)
+    return r.json()
+
+# pprint.pprint(add_reciept())
+
+
+def add_item_in_reciept():
+    url = f'http://{TEST_URL}/api/v1/reciept_item/'
+    r = requests.post(url, headers={"Authorization": "Token 80029d4e0d7ed1833a605e00c1335db9472ef5ff"}, json={
+        'item': 'Orange',
+        'reciept': 'Test_reciept',
+        'deleted': False,
+        'quantity': 3,
+        'unit': 'шт'
+    })
+    print(r)
+    return r.json()
+# pprint.pprint(add_item_in_reciept())
+
+
+def update_item_in_reciept():
+    url = 'http://127.0.0.1:8000/api/v1/reciept_item/3/'
+    r = requests.patch(url, headers={"Authorization": TEST_TOKEN}, json={
+        'deleted': True,
+    })
+    print(r)
+    return r.json()
+# pprint.pprint(update_item_in_reciept())
+
+
+def delete_item_from_reciept():
+    url = 'http://127.0.0.1:8000/api/v1/reciept_item/3/'
+    r = requests.delete(url, headers={"Authorization": TEST_TOKEN})
+    print(r)
+    return r.status_code
+
+# pprint.pprint(delete_item_from_reciept())

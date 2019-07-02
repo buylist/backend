@@ -9,5 +9,8 @@
       "USER": "postgres",
       "PASSWORD": "7415963Kokos"
     }
+  },
+  "URL_MD": {
+    "URL_CASHIER": "https://restapi.moedelo.org/accounting/api/v1/cashier"
   }
 }

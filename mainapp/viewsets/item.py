@@ -16,7 +16,7 @@ class ItemSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Item
-        fields = ('url', 'item_id', 'name', 'buyer_id', 'category_id')
+        fields = ('url', 'mobile_id', 'name', 'buyer_id', 'category_id')
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -47,7 +47,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         if item:
             item_id = item.item_id
         else:
-            item = Item.objects.filter(buyer__in=(DEFAULT_USER, self.request.user, )).order_by('-item_id').first()
+            item = Item.objects.filter(buyer__in=(DEFAULT_USER, self.request.user, )).order_by('-mobile_id').first()
             item_id = item.item_id + 1
         return item_id
 
@@ -63,7 +63,7 @@ class ItemViewSet(viewsets.ModelViewSet):
             print(serializer)
             serializer.validated_data['buyer_id'] = request.user.pk
             serializer.validated_data['category_id'] = category.pk
-            serializer.validated_data['item_id'] = request.data.get('item_id')
+            serializer.validated_data['mobile_id'] = request.data.get('mobile_id')
             serializer.validated_data['name'] = request.data['name']
 
             self.perform_create(serializer)
