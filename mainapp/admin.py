@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from mainapp.models import Buyer, ItemInChecklist, Item, Category, Checklist
+from mainapp.models import Buyer, ItemInChecklist, Item, Category, Checklist, FromWebProdFields
 
 
 # Register your models here.
@@ -21,10 +21,6 @@ class UserCreationForm(forms.ModelForm):
         fields = ('email', 'username')
 
     def clean_password2(self):
-        """
-
-        :return:
-        """
         # Check that the two password entries match
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
@@ -33,11 +29,6 @@ class UserCreationForm(forms.ModelForm):
         return password2
 
     def save(self, commit=True):
-        """
-
-        :param commit:
-        :return:
-        """
         # Save the provided password in hashed format
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
@@ -58,10 +49,6 @@ class UserChangeForm(forms.ModelForm):
         fields = ('username', 'email', 'password', 'is_active', 'is_admin')
 
     def clean_password(self):
-        """
-
-        :return:
-        """
         # Regardless of what the user provides, return the initial value.
         # This is done here, rather than on the field, because the
         # field does not have access to the initial value
@@ -76,7 +63,7 @@ class ItemInline(admin.TabularInline):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'name', 'color', 'created', 'modified']
+    list_display = ['pk', 'mobile_id', 'name', 'color', 'created', 'modified']
     list_filter = ['name', 'color', 'modified']
     search_fields = ['name']
     fieldsets = (
@@ -91,15 +78,27 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ItemInCheckListAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'checklist_id', 'quantity', 'item_id', 'modified', 'deleted', 'value']
-    list_filter = ['checklist_id', 'modified', 'modified', 'deleted']
-    search_fields = ['checklist_id']
+    list_display = ['pk', 'display_checklist', 'display_item', 'quantity', 'unit', 'modified', 'deleted', 'value']
+    list_filter = ['checklist', 'modified', 'deleted']
+    search_fields = ['checklist__name']
+
+
+class FromWebProdFieldsAdmin(admin.ModelAdmin):
+    list_display = ['prod_name', 'web_prod_name', 'price', 'measure', 'volume']
+    list_filter = ['prod_name', 'measure']
+    search_fields = ['prod_name']
+
+
+class CheckListAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'mobile_id', 'buyer', 'name', 'modified', 'created']
+    list_filter = ['buyer', 'name']
+    search_fields = ['name']
 
 
 class ItemsChangeForm(admin.ModelAdmin):
-    list_display = ['pk', 'buyer', 'name', 'category', 'created', 'modified']
+    list_display = ['pk', 'mobile_id', 'buyer', 'name', 'display_category', 'created', 'modified']
     list_filter = ['category', 'created', 'modified']
-    search_fields = ['name']
+    search_fields = ['name', 'category__name']
 
 
 class UserAdmin(BaseUserAdmin):
@@ -135,6 +134,8 @@ admin.site.register(Buyer, UserAdmin)
 admin.site.register(Item, ItemsChangeForm)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(ItemInChecklist, ItemInCheckListAdmin)
+admin.site.register(Checklist, CheckListAdmin)
+admin.site.register(FromWebProdFields, FromWebProdFieldsAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)

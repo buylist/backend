@@ -37,3 +37,12 @@ class ItemInChecklist(models.Model):
         max_digits=8, decimal_places=2,
         blank=True, default=0
     )
+
+    def display_item(self):
+        return self.item.name
+
+    def display_checklist(self):
+        return self.checklist.name
+
+    display_checklist.short_description = 'Name of checklist'
+    display_item.short_description = 'Name of item'
