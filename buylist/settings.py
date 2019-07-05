@@ -36,7 +36,7 @@ ALLOWED_HOSTS = CONFIG.get('ALLOWED_HOSTS', ['*'])
 
 SOCIALIZER = {
     'google': {
-        'request_url': 'https://www.googleapis.com/oauth2/v1/userinfo',
+        'request_url': 'https://accounts.google.com/o/oauth2/token',
         'OAUTH2_KEY': '900250578636-ot9i6pd1rh9dfvl9qgn3r6karvugqcam.apps.googleusercontent.com',
         'OAUTH2_SECRET': 'i7CJ1IIViFmF72QASfirke9R',
         'redirect_uri': 'http://127.0.0.1:8000/auth/login/google-oauth2/'
