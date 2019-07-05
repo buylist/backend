@@ -16,9 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.authtoken import views
+import socializer.views as socializer
 
 urlpatterns = [
     path('api/token/', views.obtain_auth_token),
     path('', include('mainapp.urls', namespace='mainapp')),
     path('admin/', admin.site.urls),
+    path('auth/', include('socializer.urls', namespace='socializer')),
+    path('accounts/profile/', socializer.google_response),
 ]
