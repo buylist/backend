@@ -12,7 +12,7 @@ class Category(models.Model):
     связь один ко многим с таблицой Item
     """
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
-    mobile_id = models.IntegerField()
+    mobile_id = models.IntegerField(default=0)
     name = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -37,3 +37,8 @@ class Item(models.Model):
 
     class Meta:
         unique_together = ('buyer', 'name')
+
+    def display_category(self):
+        return self.category.name
+
+    display_category.short_description = 'Name of category'
