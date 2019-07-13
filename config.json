@@ -1,0 +1,16 @@
+{
+  "DEBUG": true,
+  "SECRET_KEY": "Any secret key",
+  "DATABASES": {
+    "default": {
+      "ENGINE": "django.db.backends.postgresql",
+      "HOST": "127.0.0.1",
+      "NAME": "oki",
+      "USER": "postgres",
+      "PASSWORD": "7415963Kokos"
+    }
+  },
+  "URL_MD": {
+    "URL_CASHIER": "https://restapi.moedelo.org/accounting/api/v1/cashier"
+  }
+}
