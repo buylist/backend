@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ВХОД</title>
+    <style>
+        div {
+            margin: 5px;
+            float: left;
+            width: auto;
+            text-align: left;
+            <!--border: 1px solid #add8e6;-->
+        }
+    </style>
+</head>
+<body>
+    <div style="float: right; text-align: right">
+        <a href="{% url 'socializer:google_login' %}?web=yes">
+            <img width="50" src="https://vignette.wikia.nocookie.net/google/images/a/a7/Unnamed_%282%29-0.png">
+        </a>
+    </div>
+    <div>
+        <form method="post">{% csrf_token %}
+            {% for field in form %}
+                <div>
+                    {{ field }} | {{field.label_tag}}
+                </div>
+
+                <br>
+
+            {% endfor %}
+
+            <div>
+                <div><input type="submit" value="ВОЙТИ"> | </div> <div><a href="{% url 'mainapp:registration_page' %}">Регистрация</a></div>
+            </div>
+
+        </form>
+    </div>
+</body>
+</html>

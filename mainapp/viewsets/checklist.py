@@ -21,10 +21,6 @@ class ChecklistViewSet(viewsets.ModelViewSet):
     lookup_field = 'pk'
 
     def get_queryset(self):
-        # items - это related_name в ItemInCheckList
-        # chek = Checklist.objects.filter(buyer_id=self.request.user.pk,
-        #                                 name=self.request.data['name']).first().items.all()
-
         chek = Checklist.objects.filter(buyer_id=self.request.user.pk).all()
         return chek
 

@@ -23,5 +23,6 @@ urlpatterns = [
     path('', include('mainapp.urls', namespace='mainapp')),
     path('admin/', admin.site.urls),
     path('auth/', include('socializer.urls', namespace='socializer')),
-    path('accounts/profile/', socializer.google_response),
+    path('accounts/profile/', socializer.google_response, name='api_profile'),
+    path('accounts/profile/web/', socializer.google_response, name='web_profile'),
 ]

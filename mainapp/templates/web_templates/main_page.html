@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        div {
+            margin: 5px;
+            float: left;
+            width: 250px;
+            text-align: center;
+            }
+        input {
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div style="float: right;"><a href="{% url 'socializer:logout' %}">ВЫЙТИ</a></div>
+    <div style="color: red; text-transform: uppercase; width: auto">
+        Здравствуйте, <span style="color: blue;">{{user.username}}</span>
+    </div>
+
+    <br>
+    <br>
+
+    <a href="{% url 'mainapp:checklists_web_page' %}">
+        <div style="border: 1px solid #add8e6; background: #add8e6;">
+            ВАШИ СПИСКИ
+        </div>
+    </a>
+
+    <a href="{% url 'mainapp:patterns_web_page' %}">
+        <div style="border: 1px solid #add8e6; background: #add8e6;">
+            ВАШИ ШАБЛОНЫ
+        </div>
+    </a>
+
+</body>
+</html>

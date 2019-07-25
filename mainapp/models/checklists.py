@@ -11,6 +11,7 @@ class Checklist(models.Model):
     mobile_id = models.IntegerField()
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
     name = models.TextField()
+    share = models.CharField(blank=True, max_length=64)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -46,3 +47,22 @@ class ItemInChecklist(models.Model):
 
     display_checklist.short_description = 'Name of checklist'
     display_item.short_description = 'Name of item'
+
+
+class ItemsInShared(models.Model):
+    """
+    Класс -таблица содержащий в себе товары в списках.
+    Связан с классом списков (Checklist)
+    """
+    checklist = models.ForeignKey(Checklist, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    quantity = models.DecimalField(max_digits=12, decimal_places=4)
+    unit = models.TextField(null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    deleted = models.NullBooleanField(null=True, blank=True)
+    value = models.DecimalField(
+        verbose_name='стоимость выбранного количества',
+        max_digits=8, decimal_places=2,
+        blank=True, default=0
+    )

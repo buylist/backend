@@ -47,6 +47,11 @@ class Buyer(AbstractUser):
         max_length=255,
         unique=True,
     )
+    social_id = models.CharField(
+        blank=True,
+        verbose_name='google unique social_id',
+        max_length=255,
+    )
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)

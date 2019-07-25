@@ -2,11 +2,11 @@ import requests
 import pprint
 import datetime
 
-TEST_TOKEN = 'Token 74dc50c4654cdee1a7062296dda07f96602c04c5'
-PROD_TOKEN = 'Token 9c65603928b743c64480e88dea77a50fd90f3f41'
+TEST_TOKEN = 'Token cac73d18bb17caee51d96aff38bdb2eb5d476836'
+PROD_TOKEN = 'Token c033d8abc44f0b994d6da2d0f69f015dbbbeea8e'
 
 TEST_URL = '127.0.0.1:8000'
-PROD_URL = '35.228.148.217:8000'
+PROD_URL = '35.228.148.217:80'
 
 user_local = {"username": "buylist.project+1@gmail.com", "password": "testy1u2i3o4"}
 
@@ -25,7 +25,7 @@ def test_auth():
 
 # Запрос на получения токена
 def get_token():
-    url = 'http://127.0.0.1:8000/api/token/'
+    url = f'http://{PROD_URL}/api/token/'
     r = requests.post(url, data=user_local)
     print(r.headers)
     return r.json()
@@ -124,8 +124,8 @@ def get_lists():
 
 
 def add_list():
-    url = f'http://{TEST_URL}/api/v1/lists/'
-    r = requests.post(url, headers={"Authorization": TEST_TOKEN}, json={
+    url = f'http://{PROD_URL}/api/v1/lists/'
+    r = requests.post(url, headers={"Authorization": PROD_TOKEN}, json={
         'name': 'день рождения',
         'mobile_id': 100,
         'items': [
@@ -306,7 +306,7 @@ def update_item_in_checklist():
     return r.json()
 
 
-pprint.pprint(update_item_in_checklist())
+# pprint.pprint(update_item_in_checklist())
 '''
 
 '''

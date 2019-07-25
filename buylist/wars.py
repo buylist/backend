@@ -32,7 +32,7 @@ SECRET_KEY = CONFIG.get('SECRET_KEY', 'very_secret_key')
 
 DEBUG = CONFIG.get('DEBUG', False)
 
-ALLOWED_HOSTS = CONFIG.get('ALLOWED_HOSTS', ['*'])
+ALLOWED_HOSTS = CONFIG.get('ALLOWED_HOSTS', [''])
 
 SOCIALIZER = {
     'google': {
@@ -96,19 +96,19 @@ WSGI_APPLICATION = 'buylist.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# DATABASES = CONFIG.get('DATABASES', {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# })
-
-DATABASES = {
+DATABASES = CONFIG.get('DATABASES', {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': path.join(BASE_DIR, 'db.sqlite3'),
     }
-}
+})
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 
 # Password validation
