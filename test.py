@@ -3,7 +3,7 @@ import pprint
 import datetime
 
 TEST_TOKEN = 'Token cac73d18bb17caee51d96aff38bdb2eb5d476836'
-PROD_TOKEN = 'Token c033d8abc44f0b994d6da2d0f69f015dbbbeea8e'
+PROD_TOKEN = 'Token 58899e03b06a48d09e21bc3f239fca652a8b2de1'
 
 TEST_URL = '127.0.0.1:8000'
 PROD_URL = '35.228.148.217:80'

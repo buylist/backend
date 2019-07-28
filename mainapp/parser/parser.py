@@ -10,8 +10,8 @@ def trans_measure(to_unit, splited_vol):
     res = splited_vol['quantity']
     to_unit = to_unit.lower()
     list_of_measures = {
-        'г': {'кг': Decimal(0.001)},
-        'гр': {'кг': Decimal(0.001)},
+        'г': {'кг': Decimal(0.001), 'гр': Decimal(1)},
+        'гр': {'кг': Decimal(0.001), 'г': Decimal(1)},
         'кг': {'г': Decimal(1000), 'гр': Decimal(1000)},
         'мл': {'л': Decimal(0.001)},
         'л': {'мл': Decimal(1000)},
