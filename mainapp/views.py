@@ -1,10 +1,12 @@
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 from django.views.generic.edit import FormView, CreateView
+from rest_framework.authentication import TokenAuthentication
 from mainapp.models.checklists import Checklist, ItemInChecklist, ItemsInShared
 from mainapp.models.parser import FromWebProdFields
 from mainapp.models.users import Buyer
@@ -14,6 +16,7 @@ from mainapp.parser.parser import Parser
 from decimal import Decimal
 import hashlib
 import os
+import json
 
 # Create your views here.
 
@@ -159,6 +162,93 @@ class SharedItemsInChecklist(ListView):
     context_object_name = 'items_in_checklist'
 
     @classmethod
+    @csrf_exempt
+    def share_api(cls, request):
+        def create_shared_link(pk, buyer):
+            obj_to_share = Checklist.objects.get(pk=pk, buyer=buyer)
+            obj_to_share.share = hashlib.sha256(os.urandom(1024)).hexdigest()
+            obj_to_share.save()
+
+            for_bulk = []
+
+            for item in ItemInChecklist.objects.filter(checklist=obj_to_share):
+                for_bulk.append(
+                    ItemsInShared(item=item.item, checklist=obj_to_share, quantity=item.quantity, unit=item.unit))
+
+            ItemsInShared.objects.filter(checklist=obj_to_share).delete()
+            ItemsInShared.objects.bulk_create(for_bulk)
+
+            print(f'SHARE Created ItemsInShare {ItemsInShared.objects.filter(checklist=obj_to_share)}')
+
+            return obj_to_share.share
+
+        if request.method != 'POST':
+            return HttpResponse(status=400)
+        else:
+            token_auth = TokenAuthentication()
+            buyer, _ = token_auth.authenticate(request)
+            data = json.loads(request.body)
+
+            pk = Checklist.objects.get(mobile_id=data['mobile_id'], buyer=buyer).pk
+
+            code = create_shared_link(pk, buyer)
+
+            return HttpResponse(JsonResponse({"uri": reverse('mainapp:shared_items', args=(pk,))+'?share='+code}))
+
+    @classmethod
+    @csrf_exempt
+    def noshare_api(cls, request):
+        def del_shared_link(pk, buyer):
+            if 'return' in request.GET and request.GET['return'] == 'yes':
+                redirect_uri = request.headers['Referer']
+
+            obj_to_share = Checklist.objects.get(pk=pk, buyer=buyer)
+            obj_to_share.share = ''
+            obj_to_share.save()
+
+            ItemsInShared.objects.filter(checklist=obj_to_share).delete()
+
+            print(f'NOSHARE Deleted from ItemsInShare {ItemsInShared.objects.filter(checklist=obj_to_share)}')
+
+        if request.method != 'POST':
+            return HttpResponse(status=400)
+        else:
+            token_auth = TokenAuthentication()
+            buyer, _ = token_auth.authenticate(request)
+            data = json.loads(request.body)
+
+            pk = Checklist.objects.get(mobile_id=data['mobile_id'], buyer=buyer).pk
+
+            del_shared_link(pk, buyer)
+
+            return HttpResponse(JsonResponse({"uri": "deleted"}))
+
+    @classmethod
+    @csrf_exempt
+    def pull_shared_to_original_api(cls, request):
+        if request.method == "POST":
+            token_auth = TokenAuthentication()
+            buyer, _ = token_auth.authenticate(request)
+
+            data = json.loads(request.body)
+            print(f" data {data}")
+
+            check = Checklist.objects.get(mobile_id=data['mobile_id'], buyer=buyer)
+
+            original_objects = ItemInChecklist.objects.filter(checklist=check)
+            shared_objects = ItemsInShared.objects.filter(checklist=check)
+            if len(shared_objects) == 0:
+                return HttpResponse(JsonResponse({'response': 'no shared objects to merge'}), status=400)
+
+            for item in original_objects:
+                setattr(item, 'quantity', shared_objects.get(item=item.item).quantity)
+                setattr(item, 'unit', shared_objects.get(item=item.item).unit)
+                item.save()
+
+            return HttpResponse(JsonResponse({'response': 'shared merged with origin'}))
+        return HttpResponse(JsonResponse({'response': 'incorrect request'}), status=400)
+
+    @classmethod
     def pull_shared_to_original(cls, request, pk=0):
         check = Checklist.objects.get(pk=pk)
 
@@ -175,45 +265,60 @@ class SharedItemsInChecklist(ListView):
         return HttpResponseRedirect(reverse('mainapp:items_web_page', args=(pk,)))
 
     @classmethod
-    def share(cls, request, pk=0):
-        redirect_uri = reverse('mainapp:checklists_web_page')
+    def share_web(cls, request, pk=0):
+        def create_shared_link(pk, buyer):
+            obj_to_share = Checklist.objects.get(pk=pk, buyer=buyer)
+            obj_to_share.share = hashlib.sha256(os.urandom(1024)).hexdigest()
+            obj_to_share.save()
 
-        if 'return' in request.GET and request.GET['return'] == 'yes':
-            redirect_uri = request.headers['Referer']
+            for_bulk = []
 
-        obj_to_share = Checklist.objects.get(pk=pk, buyer=request.user)
-        obj_to_share.share = hashlib.sha256(os.urandom(1024)).hexdigest()
-        obj_to_share.save()
+            for item in ItemInChecklist.objects.filter(checklist=obj_to_share):
+                for_bulk.append(
+                    ItemsInShared(item=item.item, checklist=obj_to_share, quantity=item.quantity, unit=item.unit))
 
-        for_bulk = []
+            ItemsInShared.objects.filter(checklist=obj_to_share).delete()
+            ItemsInShared.objects.bulk_create(for_bulk)
 
-        for item in ItemInChecklist.objects.filter(checklist=obj_to_share):
-            for_bulk.append(ItemsInShared(item=item.item, checklist=obj_to_share, quantity=item.quantity, unit=item.unit))
+            print(f'SHARE Created ItemsInShare {ItemsInShared.objects.filter(checklist=obj_to_share)}')
 
-        ItemsInShared.objects.bulk_create(for_bulk)
+            return obj_to_share.share
 
-        print(f'SHARE Created ItemsInShare {ItemsInShared.objects.filter(checklist=obj_to_share)}')
+        if request.method == "GET" and pk != 0:
+            redirect_uri = reverse('mainapp:checklists_web_page')
 
-        return HttpResponseRedirect(redirect_uri)
-        # return HttpResponseRedirect(reverse('mainapp:shared_items', args=(pk,))+'?share='+obj_to_share.share)
+            if 'return' in request.GET and request.GET['return'] == 'yes':
+                redirect_uri = request.headers['Referer']
+
+            create_shared_link(pk, request.user)
+
+            return HttpResponseRedirect(redirect_uri)
+        return HttpResponse(JsonResponse({'response': 'incorrect request'}), status=400)
 
     @classmethod
-    def noshare(cls, request, pk=0):
+    def noshare_web(cls, request, pk=0):
+        def del_shared_link(pk, buyer):
+            if 'return' in request.GET and request.GET['return'] == 'yes':
+                redirect_uri = request.headers['Referer']
 
-        redirect_uri = reverse('mainapp:checklists_web_page')
+            obj_to_share = Checklist.objects.get(pk=pk, buyer=buyer)
+            obj_to_share.share = ''
+            obj_to_share.save()
 
-        if 'return' in request.GET and request.GET['return'] == 'yes':
-            redirect_uri = request.headers['Referer']
+            ItemsInShared.objects.filter(checklist=obj_to_share).delete()
 
-        obj_to_share = Checklist.objects.get(pk=pk, buyer=request.user)
-        obj_to_share.share = ''
-        obj_to_share.save()
+            print(f'NOSHARE Deleted from ItemsInShare {ItemsInShared.objects.filter(checklist=obj_to_share)}')
 
-        ItemsInShared.objects.filter(checklist=obj_to_share).delete()
+        if request.method == "GET" and pk != 0:
+            redirect_uri = reverse('mainapp:checklists_web_page')
 
-        print(f'NOSHARE Deleted from ItemsInShare {ItemsInShared.objects.filter(checklist=obj_to_share)}')
+            if 'return' in request.GET and request.GET['return'] == 'yes':
+                redirect_uri = request.headers['Referer']
 
-        return HttpResponseRedirect(redirect_uri)
+            del_shared_link(pk, request.user)
+
+            return HttpResponseRedirect(redirect_uri)
+        return HttpResponse(JsonResponse({'response': 'incorrect request'}), status=400)
 
     @classmethod
     def save_shared(cls, request, pk=0):

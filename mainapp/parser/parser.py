@@ -316,9 +316,6 @@ class Parser():
                 else:
                     apropriate_values.append(source_obj.price)
 
-                print(f"splited_vol {splited_vol} source_obj.price {source_obj.price} obj.quantity {obj.quantity} estimated_quantity {estimated_quantity} obj.unit {obj.unit}")
-
-            print(f"apropriate_values {apropriate_values}")
             try:
                 setattr(obj, 'value', min(apropriate_values))
                 obj.save()

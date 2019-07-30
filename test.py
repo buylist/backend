@@ -37,6 +37,36 @@ def get_token():
 '''
 
 
+def share_list():
+    url = f'http://{TEST_URL}/api/checklists/share/'
+    r = requests.post(url, headers={"Authorization": TEST_TOKEN}, json={"mobile_id": 100})
+    print(r.headers)
+    return r.json()
+
+
+# print(share_list())
+
+
+def noshare_list():
+    url = f'http://{TEST_URL}/api/checklists/noshare/'
+    r = requests.post(url, headers={"Authorization": TEST_TOKEN}, json={"mobile_id": 100})
+    print(r.headers)
+    return r.json()
+
+
+# print(noshare_list())
+
+
+def save_shared_to_origin():
+    url = f'http://{TEST_URL}/api/checklists/pull_to_origin/'
+    r = requests.post(url, headers={"Authorization": TEST_TOKEN}, json={"mobile_id": 100})
+    print(r.headers)
+    return r.json()
+
+
+# print(save_shared_to_origin())
+
+
 def get_users():
     url = 'http://127.0.0.1:8000/api/v1/users/'
     r = requests.get(url, headers={"Authorization": "Token 80029d4e0d7ed1833a605e00c1335db9472ef5ff"})
