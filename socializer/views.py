@@ -1,15 +1,15 @@
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from django.http import JsonResponse
 from django.urls import reverse
+import json
+from rest_framework.authtoken.models import Token
+from mainapp.models import Buyer
+from buylist.settings import SOCIALIZER
 from django.contrib.sessions.models import Session
 from django.contrib import auth
-from mainapp.models import Buyer
-from rest_framework.authtoken.models import Token
-from buylist.settings import SOCIALIZER
 import requests
 import pybase64
 import hashlib
-import json
 import os
 
 
@@ -66,27 +66,34 @@ def google_login(request):
 
 # обработка ответа гугла после запроса google_login
 def google_response(request):
-    def decode_jwt(t):
+    def decodeJWT(t):
         _, payload, _ = t.split('.')
         payload = pybase64.urlsafe_b64decode(payload + '==')
         return json.loads(payload)
 
     def get_buyer():
         auth_response = requests.post('https://oauth2.googleapis.com/token', data=auth_request).json()
+        print(f"ответ гугла {auth_response}")
 
-        response_data = decode_jwt(auth_response['id_token'])
+        response_data = decodeJWT(auth_response['id_token'])
+
+        print(f"декодированный ответ {response_data}")
 
         if Buyer.objects.filter(email=response_data['email'], social_id=response_data['sub']).first():
             buyer = Buyer.objects.filter(email=response_data['email'], social_id=response_data['sub']).first()
+            print(f'Найден существующий пользователь {buyer}')
         else:
             if not Buyer.objects.filter(email=response_data['email']).first():
                 buyer = Buyer.objects.create_user(email=response_data['email'], password=os.urandom(10),
                                                   social_id=response_data['sub'])
+                print(f'Найден в бд пользователь {buyer.email} sochi {buyer.social_id}')
             else:
                 buyer = Buyer.objects.filter(email=response_data['email']).first()
                 setattr(buyer, 'password', os.urandom(10))
                 setattr(buyer, 'social_id', response_data['sub'])
                 buyer.save()
+
+                print(f'Найден пользователь таким email {buyer.email}, меняем пароль...')
 
         return buyer
 

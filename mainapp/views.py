@@ -11,6 +11,7 @@ from mainapp.models.checklists import Checklist, ItemInChecklist, ItemsInShared
 from mainapp.models.parser import FromWebProdFields
 from mainapp.models.users import Buyer
 from mainapp.models.patterns import Pattern, ItemInPattern
+from mainapp.models.reciepts import Reciept, ItemInReciept
 from socializer.forms import LoginForm, RegisterForm
 from mainapp.parser.parser import Parser
 from decimal import Decimal
@@ -68,21 +69,10 @@ def register(request):
     return render(request, 'web_templates/register_form.html', context)
 
 
-class MyProfile(TemplateView):
-
-    template_name = 'web_templates/main_page.html'
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        context['user'] = request.user
-        return self.render_to_response(context)
-
-
-class WebChecklists(ListView):
+class MyProfile(ListView):
     model = Checklist
-    template_name = 'web_templates/checklists.html'
+    template_name = 'web_templates/main_page.html'
     context_object_name = 'checklists'
-    # paginate_by = 100
 
     def get(self, request, *args, **kwargs):
 
@@ -101,9 +91,44 @@ class WebChecklists(ListView):
                 raise Http404(_("Empty list and '%(class_name)s.allow_empty' is False.") % {
                     'class_name': self.__class__.__name__,
                 })
-        context = self.get_context_data()
+
+        patterns = Pattern.objects.filter(buyer=request.user)
+        reciepts = Reciept.objects.filter(buyer=request.user)
+
+        context = self.get_context_data(**kwargs)
         context['user'] = request.user
+        context['page_title'] = 'BuyList for you'
+        context['patterns'] = patterns
+        context['reciepts'] = reciepts
         return self.render_to_response(context)
+
+
+# class WebChecklists(ListView):
+#     model = Checklist
+#     template_name = 'web_templates/checklists.html'
+#     context_object_name = 'checklists'
+#     # paginate_by = 100
+#
+#     def get(self, request, *args, **kwargs):
+#
+#         if request.user in Buyer.objects.filter(email='anonymous@anonymous.ru'):
+#             auth.logout(request)
+#
+#         self.object_list = self.get_queryset().filter(buyer=request.user)
+#         allow_empty = self.get_allow_empty()
+#
+#         if not allow_empty:
+#             if self.get_paginate_by(self.object_list) is not None and hasattr(self.object_list, 'exists'):
+#                 is_empty = not self.object_list.exists()
+#             else:
+#                 is_empty = not self.object_list
+#             if is_empty:
+#                 raise Http404(_("Empty list and '%(class_name)s.allow_empty' is False.") % {
+#                     'class_name': self.__class__.__name__,
+#                 })
+#         context = self.get_context_data()
+#         context['user'] = request.user
+#         return self.render_to_response(context)
 
 
 class ItemsInChecklist(ListView):
@@ -369,24 +394,24 @@ class SharedItemsInChecklist(ListView):
             return HttpResponse('you have no perms for this page', status=401)
 
 
-class Patterns(ListView):
-    model = Pattern
-    template_name = 'web_templates/patterns.html'
-    # paginate_by = 100
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset().filter(buyer=request.user)
-        allow_empty = self.get_allow_empty()
-
-        if not allow_empty:
-            if self.get_paginate_by(self.object_list) is not None and hasattr(self.object_list, 'exists'):
-                is_empty = not self.object_list.exists()
-            else:
-                is_empty = not self.object_list
-            if is_empty:
-                raise Http404(_("Empty list and '%(class_name)s.allow_empty' is False.") % {
-                    'class_name': self.__class__.__name__,
-                })
-        context = self.get_context_data()
-        context['user'] = request.user
-        return self.render_to_response(context)
+# class Patterns(ListView):
+#     model = Pattern
+#     template_name = 'web_templates/patterns.html'
+#     # paginate_by = 100
+#
+#     def get(self, request, *args, **kwargs):
+#         self.object_list = self.get_queryset().filter(buyer=request.user)
+#         allow_empty = self.get_allow_empty()
+#
+#         if not allow_empty:
+#             if self.get_paginate_by(self.object_list) is not None and hasattr(self.object_list, 'exists'):
+#                 is_empty = not self.object_list.exists()
+#             else:
+#                 is_empty = not self.object_list
+#             if is_empty:
+#                 raise Http404(_("Empty list and '%(class_name)s.allow_empty' is False.") % {
+#                     'class_name': self.__class__.__name__,
+#                 })
+#         context = self.get_context_data()
+#         context['user'] = request.user
+#         return self.render_to_response(context)
