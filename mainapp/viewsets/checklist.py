@@ -54,11 +54,14 @@ class ChecklistViewSet(viewsets.ModelViewSet):
                                                                             defaults={'name': item['category']})
                     item.pop('mob_cat_id', False)
 
+                    # если в БД не существует передаваемого в чек-лист товара, мы его передаём на создание,
+                    # иначе обновляем
                     item_in_list['item'], _ = Item.objects.update_or_create(buyer_id=item['buyer_id'],
                                                                             mobile_id=item['mobile_id'],
                                                                             defaults=item)
                     item_in_list['checklist'] = checklist_obj
 
+                    # передаем на создание в БД товары в чек-листе
                     items_in_checklist.append(ItemInChecklist(**item_in_list))
 
                 ItemInChecklist.objects.bulk_create(items_in_checklist)
@@ -96,6 +99,7 @@ class ChecklistViewSet(viewsets.ModelViewSet):
                                                                         defaults={'name': item['category']})
                 item.pop('mob_cat_id', False)
 
+                # если в БД не существует передаваемого в чек-лист товара, мы его передаём на создание, иначе обновляем
                 item_in_list['item'], _ = Item.objects.update_or_create(buyer_id=item['buyer_id'],
                                                                         mobile_id=item['mobile_id'],
                                                                         defaults=item)
@@ -107,6 +111,7 @@ class ChecklistViewSet(viewsets.ModelViewSet):
                 for attr, value in item_in_list.items():
                     setattr(obj_to_update, attr, value)
 
+                # передаем на создание в БД товары в чек-листе
                 items_in_checklist.append(obj_to_update)
 
             ItemInChecklist.objects.bulk_update(items_in_checklist,

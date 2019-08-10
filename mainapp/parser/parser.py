@@ -226,7 +226,7 @@ def del_tag_content(text, open='<', close='>', mark=None, marker=' UUU '):
     return res
 
 
-class Parser:
+class Parser():
     def __init__(self, products, web_config):
         self.products = list(set(products))
         self.prod_fields = []
