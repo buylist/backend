@@ -4,6 +4,7 @@ import datetime
 
 TEST_TOKEN = 'Token cac73d18bb17caee51d96aff38bdb2eb5d476836'
 PROD_TOKEN = 'Token 58899e03b06a48d09e21bc3f239fca652a8b2de1'
+ADMIN_TOKEN = 'Token c971f845bc2cc6ed50c75220f0e2eb32d315f7b0'
 
 TEST_URL = '127.0.0.1:8000'
 PROD_URL = '35.228.148.217:80'
@@ -38,8 +39,8 @@ def get_token():
 
 
 def share_list():
-    url = f'http://{TEST_URL}/api/checklists/share/'
-    r = requests.post(url, headers={"Authorization": TEST_TOKEN}, json={"mobile_id": 100})
+    url = f'http://{PROD_URL}/api/checklists/share/'
+    r = requests.post(url, headers={"Authorization": ADMIN_TOKEN}, json={"mobile_id": 129})
     print(r.headers)
     return r.json()
 
