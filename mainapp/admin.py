@@ -63,7 +63,7 @@ class ItemInline(admin.TabularInline):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'mobile_category_id', 'name', 'color', 'created', 'modified']
+    list_display = ['pk', 'mobile_id', 'name', 'color', 'created', 'modified']
     list_filter = ['name', 'color', 'modified']
     search_fields = ['name']
     fieldsets = (
@@ -78,9 +78,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ItemInCheckListAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'checklist_id', 'quantity', 'unit', 'item_id', 'display_item', 'modified', 'deleted', 'value']
-    list_filter = ['checklist_id', 'modified', 'modified', 'deleted']
-    search_fields = ['checklist_id']
+    list_display = ['pk', 'display_checklist', 'display_item', 'quantity', 'unit', 'modified', 'deleted', 'value']
+    list_filter = ['checklist', 'modified', 'deleted']
+    search_fields = ['checklist__name']
 
 
 class FromWebProdFieldsAdmin(admin.ModelAdmin):
@@ -90,15 +90,15 @@ class FromWebProdFieldsAdmin(admin.ModelAdmin):
 
 
 class CheckListAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'checklist_id', 'buyer', 'name', 'modified', 'created']
+    list_display = ['pk', 'mobile_id', 'buyer', 'name', 'modified', 'created']
     list_filter = ['buyer', 'name']
     search_fields = ['name']
 
 
 class ItemsChangeForm(admin.ModelAdmin):
-    list_display = ['pk', 'item_id', 'buyer', 'name', 'category', 'created', 'modified']
+    list_display = ['pk', 'mobile_id', 'buyer', 'name', 'display_category', 'created', 'modified']
     list_filter = ['category', 'created', 'modified']
-    search_fields = ['name']
+    search_fields = ['name', 'category__name']
 
 
 class UserAdmin(BaseUserAdmin):

@@ -12,7 +12,7 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('url', 'name', 'modified', 'color', 'mobile_category_id')
+        fields = ('url', 'name', 'modified', 'color', 'mobile_id')
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

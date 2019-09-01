@@ -4,7 +4,6 @@ from rest_framework import serializers, viewsets, status
 from rest_framework.response import Response
 import json
 from mainapp.models import Item, Category
-from mainapp.viewsets.category import CategorySerializer
 
 
 DEFAULT_USER = settings.CONFIG.get('DEFAULT_USER_ID', 0)
@@ -17,11 +16,10 @@ class ItemSerializer(serializers.HyperlinkedModelSerializer):
     # category_id = serializers.IntegerField() # А если их переопределить таким образом, то нормльно записывает...
     category = serializers.CharField(required=False)
     mob_cat_id = serializers.IntegerField(required=False)
-    item_id = serializers.IntegerField(required=True)
 
     class Meta:
         model = Item
-        fields = ('url', 'name', 'category', 'mob_cat_id', 'item_id')
+        fields = ('url', 'name', 'category', 'mob_cat_id', 'mobile_id')
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -37,7 +35,7 @@ class ItemViewSet(viewsets.ModelViewSet):
 
     def get_category(self, category_name, mob_cat_id):
         category, _ = Category.objects.get_or_create(buyer_id=self.request.user.pk, name=category_name,
-                                                     mobile_category_id=mob_cat_id)
+                                                     mobile_id=mob_cat_id)
         # category = Category.objects.filter(buyer__in=(
         #     DEFAULT_USER, self.request.user,)).filter(name=category_name, ).order_by('-buyer').first()
         # if not category:

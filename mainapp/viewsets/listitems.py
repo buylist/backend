@@ -1,14 +1,9 @@
 from rest_framework import serializers, viewsets, status
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.conf import settings
-from mainapp.models import ItemInChecklist, Checklist, Category, Item, FromWebProdFields
-from mainapp.viewsets.category import CategoryViewSet
-from rest_framework import generics
-from mainapp.viewsets.item import ItemSerializer
+from mainapp.models import ItemInChecklist, Checklist, Item, FromWebProdFields
 from mainapp.parser.parser import Parser
-from django.db.utils import IntegrityError
+from mainapp.viewsets.item import ItemSerializer
 
 
 DEFAULT_USER = settings.CONFIG.get('DEFAULT_USER_ID', 0)
@@ -31,22 +26,21 @@ class ChangeItemInChecklistSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="mainapp:checklist-detail", lookup_field='pk')
     item_name = serializers.CharField(required=False)
     checklist_name = serializers.CharField(required=False)
-    # many = True
+    mob_item_id = serializers.IntegerField(required=False)
+    mob_check_id = serializers.IntegerField(required=False)
 
     class Meta:
         model = ItemInChecklist
         fields = (
             'url',
+            'mob_item_id',
             'item_name',
+            'mob_check_id',
             'checklist_name',
             'deleted',
             'quantity',
             'unit'
         )
-
-
-class Test_c(generics.GenericAPIView):
-    pass
 
 
 class ItemlistViewSet(viewsets.ModelViewSet):
@@ -59,11 +53,15 @@ class ItemlistViewSet(viewsets.ModelViewSet):
         data = request.data
         print(data)
         try:
-            item = Item.objects.filter(buyer_id=self.request.user.pk).filter(name=data['item_name']).first()
-            checklist = Checklist.objects.filter(buyer_id=self.request.user.pk, name=data['checklist_name']).first()
+            item, _ = Item.objects.get_or_create(buyer_id=self.request.user.pk, name=data['item_name'],
+                                       mobile_id=data['mob_item_id'])
+            checklist = Checklist.objects.filter(buyer_id=self.request.user.pk, name=data['checklist_name'],
+                                                 mobile_id=data['mob_check_id']).first()
 
             data.pop('item_name')
             data.pop('checklist_name')
+            data.pop('mob_item_id')
+            data.pop('mob_check_id')
 
             serializer = self.get_serializer(data=data)
             serializer.is_valid(raise_exception=True)
@@ -71,8 +69,11 @@ class ItemlistViewSet(viewsets.ModelViewSet):
             serializer.validated_data['item_id'] = item.id
             serializer.validated_data['checklist_id'] = checklist.id
 
-            print(serializer.validated_data)
             self.perform_create(serializer)
+
+            Parser.django_value_field_update(FromWebProdFields, self.get_queryset().filter(item=item,
+                                                                                           checklist=checklist))
+
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         except Exception as e:
@@ -86,6 +87,8 @@ class ItemlistViewSet(viewsets.ModelViewSet):
         data = request.data
         data.pop('item_name', False)
         data.pop('checklist_name', False)
+        data.pop('mob_item_id', False)
+        data.pop('mob_check_id', False)
 
         items_in_checklist = [instance]
 
@@ -102,6 +105,3 @@ class ItemlistViewSet(viewsets.ModelViewSet):
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
-
-
-

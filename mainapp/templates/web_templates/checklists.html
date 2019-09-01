@@ -1,0 +1,65 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ВАШИ СПИСКИ</title>
+    <style>
+        div {
+            margin: 5px;
+            float: left;
+            width: 250px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div style="color: red; text_transform: uppercase">
+    {{user.username}}, ВАШИ СПИСКИ:
+    </div>
+
+    <br>
+
+    {% for check in checklists %}
+    <div style="padding-top: 10px; border: 1px solid #add8e6">
+        <a href="{% url 'mainapp:items_web_page' check.pk %}">
+            <div style="max-width:200px; background: grey; border: 1px solid black;">
+                {{check.name}}
+            </div>
+        </a>
+
+        <br>
+
+        <div>
+            ID вашего списка: {{check.mobile_id}}
+        </div>
+
+        <br>
+
+        <div>
+            Последнее изменение списка: {{check.modified}}
+        </div>
+
+        <br>
+
+            <div style="float: left; max-width: 100px; background: {% if check.share %}green{% else %}red{% endif %}">
+                SHARED
+            </div>
+            {% if check.share %}
+            <div style="float: left; max-width: 100px; color: blue; font-weight: bold;">
+                <a href = "{% url 'mainapp:shared_items' check.pk %}?share={{check.share}}"> ССЫЛКА </a>
+            </div>
+            {% endif %}
+
+        <br>
+        <br>
+
+        <div>
+            Поделиться списком <a href="{% url 'mainapp:share' check.pk %}"> YES </a>  / <a href="{% url 'mainapp:noshare' check.pk %}">NO</a>
+        </div>
+    </div>
+    {% endfor %}
+
+</body>
+</html>

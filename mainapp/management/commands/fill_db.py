@@ -52,8 +52,8 @@ class Command(BaseCommand):
 
             # Заменяем имя пользователя идентификатором из базы
             category['buyer'] = _buyer
-            category['mobile_category_id'] = 0
-            category['mobile_category_id'] += mob_id
+            category['mobile_id'] = 0
+            category['mobile_id'] += mob_id
             category_objs.append(Category(**category))
             mob_id += 1
 
@@ -80,7 +80,7 @@ class Command(BaseCommand):
             # Заменяем имя пользователя и название категории идентификаторами из базы
             item['buyer'] = _buyer
             item['category'] = _category
-            item['item_id'] = item_id
+            item['mobile_id'] = item_id
 
             item_objs.append(Item(**item))
             item_id = item_id + 1

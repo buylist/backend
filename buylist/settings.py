@@ -34,6 +34,18 @@ DEBUG = CONFIG.get('DEBUG', False)
 
 ALLOWED_HOSTS = CONFIG.get('ALLOWED_HOSTS', ['*'])
 
+SOCIALIZER = {
+    'google': {
+        'request_url': 'https://accounts.google.com/o/oauth2/auth',
+        'OAUTH2_KEY': '900250578636-ot9i6pd1rh9dfvl9qgn3r6karvugqcam.apps.googleusercontent.com',
+        'OAUTH2_SECRET': 'i7CJ1IIViFmF72QASfirke9R',
+        'redirect_uri': 'http://www.buy-list.cloud/accounts/profile/',
+        'redirect_uri_web': 'http://www.buy-list.cloud/accounts/profile/web/',
+        'grant_type': 'authorization_code',
+        'response_type': 'code',
+        'scope': 'openid email profile',
+    },
+}
 
 # Application definition
 
@@ -47,6 +59,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'mainapp',
+    'socializer',
 ]
 
 MIDDLEWARE = [
@@ -102,6 +115,7 @@ DATABASES = {
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
 AUTH_USER_MODEL = 'mainapp.Buyer'
+LOGIN_URL = 'mainapp:entrance_page'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -135,7 +149,7 @@ REST_FRAMEWORK = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 

@@ -10,8 +10,8 @@ def trans_measure(to_unit, splited_vol):
     res = splited_vol['quantity']
     to_unit = to_unit.lower()
     list_of_measures = {
-        'г': {'кг': Decimal(0.001)},
-        'гр': {'кг': Decimal(0.001)},
+        'г': {'кг': Decimal(0.001), 'гр': Decimal(1)},
+        'гр': {'кг': Decimal(0.001), 'г': Decimal(1)},
         'кг': {'г': Decimal(1000), 'гр': Decimal(1000)},
         'мл': {'л': Decimal(0.001)},
         'л': {'мл': Decimal(1000)},
@@ -26,6 +26,9 @@ def trans_measure(to_unit, splited_vol):
             pass
         elif gage.get(splited_vol['measure'], None):
             res /= gage[splited_vol['measure']]
+        else:
+            print(f'{to_unit} нельзя привести к {splited_vol["measure"]}')
+            res = 0
 
     return res
 
@@ -52,8 +55,11 @@ def transform_str_to_decimals(str_obj):
     return str_obj
 
 
-def find_fields(product, prod_fields, available_list_of_fields, reg_expr, semantic_distance=10):
+def find_fields(product, prod_fields, available_list_of_fields, reg_expr, marker=' UUU ', semantic_distance=10):
     prod = product.lower()
+    marker = marker.lower()
+    marker = marker.lstrip()
+    marker = marker.rstrip()
 
     prod_name_parts = prod.split(' ')
 
@@ -77,7 +83,14 @@ def find_fields(product, prod_fields, available_list_of_fields, reg_expr, semant
         start = 0
         while vers_of_splited_pn[t][0] in available_list_of_fields[start:end]:
             res_ind = available_list_of_fields[start:end].index(vers_of_splited_pn[t][0]) + start
+
+            if available_list_of_fields[res_ind - 1] == marker:
+                full_match_possibility = True
+            else:
+                full_match_possibility = False
+
             i = 0
+
             try:
                 while vers_of_splited_pn[t][0 + i] == available_list_of_fields[res_ind + i]:
                     i += 1
@@ -86,7 +99,10 @@ def find_fields(product, prod_fields, available_list_of_fields, reg_expr, semant
                     ind = None
 
             except IndexError:
-                if not re.match(r'' + reg_expr['prod_name'], available_list_of_fields[res_ind + i]):
+                if (not re.match(r'' + reg_expr['prod_name'], available_list_of_fields[res_ind + i]) or
+                    available_list_of_fields[res_ind + i] == marker) and \
+                        full_match_possibility:
+
                     ind = res_ind
 
                     temp_name = 'PROD_'+str(t)+'_'+str(res_ind+i-1)
@@ -111,7 +127,8 @@ def find_fields(product, prod_fields, available_list_of_fields, reg_expr, semant
 
                     o = 0
                     try:
-                        while re.match(r'' + reg_expr['prod_name'], available_list_of_fields[res_ind + o]):
+                        while re.match(r'' + reg_expr['prod_name'], available_list_of_fields[res_ind + o]) and \
+                                available_list_of_fields[res_ind + o] != marker:
                             sec_res[temp_name]['web_prod_name'] += ' ' + available_list_of_fields[res_ind + o]
                             o += 1
                     except IndexError:
@@ -128,9 +145,13 @@ def find_fields(product, prod_fields, available_list_of_fields, reg_expr, semant
     if len(full_match_keys) > 0:
         for prod_n, prod_i in full_match_keys:
             for prod_f in prod_fields:
+                correction_for_marker = 0
                 for i, field_form_web in enumerate(available_list_of_fields[prod_i:]):
+                    if field_form_web == marker:
+                        correction_for_marker += 1
+
                     if re.match(r''+reg_expr[prod_f], field_form_web):
-                        if i < semantic_distance:
+                        if i < semantic_distance + correction_for_marker:
                             if prod_f == 'price':
                                 res[prod_n][prod_f] = transform_str_to_decimals(field_form_web)
                             else:
@@ -149,9 +170,13 @@ def find_fields(product, prod_fields, available_list_of_fields, reg_expr, semant
 
         for prod_n, prod_i in partly_match_keys:
             for prod_f in prod_fields:
+                correction_for_marker = 0
                 for i, field_form_web in enumerate(available_list_of_fields[prod_i:]):
+                    if field_form_web == marker:
+                        correction_for_marker += 1
+
                     if re.match(r''+reg_expr[prod_f], field_form_web):
-                        if i < semantic_distance:
+                        if i < semantic_distance + correction_for_marker:
                             if prod_f == 'price':
                                 sec_res[prod_n][prod_f] = transform_str_to_decimals(field_form_web)
                             else:
@@ -168,7 +193,7 @@ def find_fields(product, prod_fields, available_list_of_fields, reg_expr, semant
     return res
 
 
-def del_tag_content(text, open='<', close='>'):
+def del_tag_content(text, open='<', close='>', mark=None, marker=' UUU '):
     open_tag = False
     close_tag = True
 
@@ -181,19 +206,27 @@ def del_tag_content(text, open='<', close='>'):
         if letter == close:
             close_tag = True
             open_tag = False
+
         if open_tag and not close_tag:
             pass
         else:
-            if letter == open or letter == close:
-                    pass
+            if letter == open:
+                pass
+            elif letter == close:
+                if mark:
+                    res += marker
+                pass
             else:
+                if letter == '.' or letter == ',':
+                    while res.rfind(marker) + len(marker) == len(res):
+                        res = res[:-len(marker)]
 
                 res += str(letter)
 
     return res
 
 
-class Parser():
+class Parser:
     def __init__(self, products, web_config):
         self.products = list(set(products))
         self.prod_fields = []
@@ -210,7 +243,7 @@ class Parser():
             for prod in self.products:
                 url_param = str(www['search_exp'])+str(prod)
                 info = requests.get(www['adr'], params=url_param)
-                clear_data = del_tag_content(info.text)
+                clear_data = del_tag_content(info.text, mark=True)
                 clear_data = del_tag_content(clear_data, open='[', close=']')
                 clear_data = re.findall(r''+www['reg_expr']['measure']+'|'
                                         + www['reg_expr']['volume'] + '|'
@@ -219,14 +252,10 @@ class Parser():
 
                 clear_data = [i.lower() for i in clear_data]
 
-                print(f"\nThis is clear_data:\n {clear_data}\n")
-
                 self.dict[www['adr']][prod] = []
 
                 found = find_fields(prod, self.prod_fields, clear_data, www['reg_expr'],
                                     semantic_distance=www['semantic_dist'])
-
-                print(f"\nThis is found:\n {found}\n")
 
                 if 'NO_FULL_MATCH' not in found:
                     found = found.values()
@@ -280,7 +309,7 @@ class Parser():
                 estimated_quantity = trans_measure(obj.unit, splited_vol)
 
                 if obj.quantity:
-                    if obj.unit:
+                    if obj.unit and estimated_quantity:
                         apropriate_values.append((obj.quantity/estimated_quantity) * source_obj.price)
                     else:
                         apropriate_values.append(obj.quantity * source_obj.price)
@@ -309,7 +338,7 @@ class Parser():
 
 
 if __name__ == '__main__':
-    products = ['лимон']
+    products = ['картофель']
 
     web_config = [
         {

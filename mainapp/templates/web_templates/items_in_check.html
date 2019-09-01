@@ -1,0 +1,107 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{checklist.name}}</title>
+    <style>
+        div {
+            margin: 5px;
+            float: left;
+            width: 250px;
+            text-align: center;
+            }
+        input {
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div style="float: right;"><a href="{% url 'socializer:logout' %}">ВЫЙТИ</a></div>
+    <div style="color: red; text-transform: uppercase; width: auto">
+        Список <span style="color: blue;">{{checklist.name}}</span> | редактирует <span style="color: blue;">{{user.username}}</span>
+    </div>
+
+    <br>
+    <br>
+
+    <a href="{% url 'mainapp:checklists_web_page' %}">
+        <div style="padding: 10px; border: 1px solid #add8e6; background: #add8e6;">
+            К спискам
+        </div>
+    </a>
+    <br>
+    <br>
+    <br>
+
+    <div style="width: auto; float: none; padding: 10px; border: 1px solid #add8e6">
+        <div style="max-width:200px;">
+            ПРОДУКТ
+        </div>
+
+        <div style="max-width:120px;">
+            КОЛ-ВО
+        </div>
+
+        <div style="max-width:75px;">
+            РУБ.
+        </div>
+
+        <div style="width: auto;">
+            ИЗМЕНЕНО
+        </div>
+
+        <br>
+
+    </div>
+
+    <br>
+
+    <form name="shared_form" method="post" action="{% url 'mainapp:upd_check' checklist.pk %}">{% csrf_token %}
+    {% for item in items_in_checklist %}
+    <div style="width: auto; float: none; padding: 10px; border: 1px solid #add8e6">
+        <div style="max-width:200px; background: grey">
+            {{item.item.name}}
+        </div>
+
+        <div style="max-width:120px;">
+                <input name="quantity_{{item.item.pk}}" type="number" maxlength="25" min="0" value="{{item.quantity|floatformat:0}}">
+                <input name="unit_{{item.item.pk}}" type="text" maxlength="3" value="{{item.unit}}">
+        </div>
+
+        <div style="max-width:75px;">
+            {{item.value}}
+        </div>
+
+        <div style="width: auto;">
+            {{item.modified}}
+        </div>
+
+        <br>
+
+    </div>
+    {% endfor %}
+    <div>
+        <input type="submit" name="submit" id="submit" style="height:40px; width: 100px" value="Сохранить">
+    </div>
+    </form>
+
+    <br>
+
+    <div style="float: left; max-width: 100px; background: {% if checklist.share %}green{% else %}red{% endif %}">
+        SHARED
+    </div>
+
+    {% if checklist.share %}
+    <div style="float: left; max-width: 100px; color: blue; font-weight: bold;">
+        <a href = "{% url 'mainapp:shared_items' checklist.pk %}?share={{checklist.share}}"> ССЫЛКА </a>
+    </div>
+    {% endif %}
+
+    <div>
+        Поделиться списком <a href="{% url 'mainapp:share' checklist.pk %}?return=yes"> YES </a> / <a href="{% url 'mainapp:noshare' checklist.pk %}?return=yes">NO</a>
+    </div>
+
+</body>
+</html>
