@@ -12,15 +12,16 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 # import os
 
-from json import loads
+from json import loads, load
 from os import path
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 
 
-with open(path.join(BASE_DIR, 'config.json'), 'r') as fp:
+with open(path.join(BASE_DIR, 'config.json'), 'r') as fp, open(path.join(BASE_DIR, 'socializer.json'), 'r') as soc:
     CONFIG = loads(fp.read())
+    SOCIALIZER = loads(soc)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -33,19 +34,6 @@ SECRET_KEY = CONFIG.get('SECRET_KEY', 'very_secret_key')
 DEBUG = CONFIG.get('DEBUG', False)
 
 ALLOWED_HOSTS = CONFIG.get('ALLOWED_HOSTS', ['*'])
-
-SOCIALIZER = {
-    'google': {
-        'request_url': 'https://accounts.google.com/o/oauth2/auth',
-        'OAUTH2_KEY': '900250578636-ot9i6pd1rh9dfvl9qgn3r6karvugqcam.apps.googleusercontent.com',
-        'OAUTH2_SECRET': 'i7CJ1IIViFmF72QASfirke9R',
-        'redirect_uri': 'http://www.buy-list.cloud/accounts/profile/',
-        'redirect_uri_web': 'http://www.buy-list.cloud/accounts/profile/web/',
-        'grant_type': 'authorization_code',
-        'response_type': 'code',
-        'scope': 'openid email profile',
-    },
-}
 
 # Application definition
 
