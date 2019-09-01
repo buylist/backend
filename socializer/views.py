@@ -59,7 +59,7 @@ def google_login(request):
     response = HttpResponseRedirect(google['request_url']+url_conf, request.POST)
     response.set_cookie(key='state', value=url_params['state'])
 
-    request.session['state'] = url_params['state']
+    # request.session['state'] = url_params['state']
 
     return response
 
