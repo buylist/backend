@@ -7,6 +7,6 @@
         "redirect_uri_web": "http://www.buy-list.cloud/accounts/profile/web/",
         "grant_type": "authorization_code",
         "response_type": "code",
-        "scope": "openid email profile",
-    },
+        "scope": "openid email profile"
+    }
 }

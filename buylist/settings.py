@@ -21,7 +21,7 @@ BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 
 with open(path.join(BASE_DIR, 'config.json'), 'r') as fp, open(path.join(BASE_DIR, 'socializer.json'), 'r') as soc:
     CONFIG = loads(fp.read())
-    SOCIALIZER = loads(soc)
+    SOCIALIZER = loads(soc.read())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/

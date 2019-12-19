@@ -291,6 +291,7 @@ def update_item():
 
 '''
 
+
 def delete_item():
     url = 'http://35.228.148.217:8000/api/v1/items/2/'
     r = requests.delete(url, headers={"Authorization": "Token 9c65603928b743c64480e88dea77a50fd90f3f41"})
@@ -302,6 +303,7 @@ def delete_item():
 '''
 <Response [204]>
 '''
+
 
 # checklist must already exist in db or will responce 400 or error Nonobject doesn't have "id"
 def add_item_in_checklist():
@@ -354,6 +356,47 @@ def delete_item_from_list():
 '''
 <Response [204]>
 '''
+
+
+def add_pattern():
+    url = f'http://{PROD_URL}/api/v1/pattern/'
+    r = requests.post(url, headers={"Authorization": ADMIN_TOKEN}, json={
+        # 'items_pattern': [
+        #     {
+        #         "item": {"name": "Сухарики", "category": "Снэки", 'mob_cat_id': 0, "mobile_id": 101},
+        #         "unit": "шт",
+        #         "quantity": 20,
+        #         "deleted": "False",
+        #     },
+        #     {
+        #         "item": {"name": "Чипсы", "category": "Снэки", 'mob_cat_id': 0, "mobile_id": 102},
+        #         "unit": "шт",
+        #         "quantity": 2,
+        #         "deleted": "True",
+        #     },
+        # ],
+        'name': 'test_pattern_2',
+        'mobile_id': 1767666,
+    })
+    print(r)
+    return r.json()
+
+# 'http://35.228.148.217/api/v1/pattern/4/'
+pprint.pprint(add_pattern())
+
+
+def add_item_in_reciept():
+    url = f'http://{TEST_URL}/api/v1/reciept_item/'
+    r = requests.post(url, headers={"Authorization": "Token 80029d4e0d7ed1833a605e00c1335db9472ef5ff"}, json={
+        'item': 'Orange',
+        'reciept': 'Test_reciept',
+        'deleted': False,
+        'quantity': 3,
+        'unit': 'шт'
+    })
+    print(r)
+    return r.json()
+# pprint.pprint(add_item_in_reciept())
 
 
 def get_reciept():
