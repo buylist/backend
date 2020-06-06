@@ -41,6 +41,8 @@ class Command(BaseCommand):
 
         Category.objects.all().delete()
 
+        mob_id = 0
+
         category_objs = []
         for category in categories:
             buyer_name = category['buyer']
@@ -50,7 +52,10 @@ class Command(BaseCommand):
 
             # Заменяем имя пользователя идентификатором из базы
             category['buyer'] = _buyer
+            category['mobile_id'] = 0
+            category['mobile_id'] += mob_id
             category_objs.append(Category(**category))
+            mob_id += 1
 
         Category.objects.bulk_create(category_objs)
         print('Каталоги товаров подгружены!')
@@ -75,7 +80,7 @@ class Command(BaseCommand):
             # Заменяем имя пользователя и название категории идентификаторами из базы
             item['buyer'] = _buyer
             item['category'] = _category
-            item['item_id'] = item_id
+            item['mobile_id'] = item_id
 
             item_objs.append(Item(**item))
             item_id = item_id + 1

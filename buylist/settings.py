@@ -12,15 +12,16 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 # import os
 
-from json import loads
+from json import loads, load
 from os import path
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 
 
-with open(path.join(BASE_DIR, 'config.json'), 'r') as fp:
+with open(path.join(BASE_DIR, 'config.json'), 'r') as fp, open(path.join(BASE_DIR, 'socializer.json'), 'r') as soc:
     CONFIG = loads(fp.read())
+    SOCIALIZER = loads(soc.read())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -29,10 +30,10 @@ with open(path.join(BASE_DIR, 'config.json'), 'r') as fp:
 SECRET_KEY = CONFIG.get('SECRET_KEY', 'very_secret_key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = CONFIG.get('DEBUG', False)
 
-ALLOWED_HOSTS = CONFIG.get('ALLOWED_HOSTS', [])
-
+ALLOWED_HOSTS = CONFIG.get('ALLOWED_HOSTS', ['*'])
 
 # Application definition
 
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'mainapp',
+    'socializer',
 ]
 
 MIDDLEWARE = [
@@ -63,7 +65,7 @@ ROOT_URLCONF = 'buylist.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,18 +84,26 @@ WSGI_APPLICATION = 'buylist.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = CONFIG.get('DATABASES', {
+# DATABASES = CONFIG.get('DATABASES', {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# })
+
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': path.join(BASE_DIR, 'db.sqlite3'),
     }
-})
+}
 
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
 AUTH_USER_MODEL = 'mainapp.Buyer'
+LOGIN_URL = 'mainapp:entrance_page'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -127,7 +137,7 @@ REST_FRAMEWORK = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -140,3 +150,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    path.join(BASE_DIR, 'static'),
+)

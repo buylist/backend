@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    {% block css %}
+        <link rel="stylesheet" href="{% static 'styles/index.css' %}">
+    {% endblock %}
+
+    {% block js %}
+    {% endblock %}
+
+    <title>
+        {% block title %}
+            {{ page_title }}
+        {% endblock %}
+    </title>
+</head>
+
+<body>
+    {% block header %}
+        <header>
+            <img src="{% static 'img/index/logo.png' %}" alt="logo">
+            <h1>BuyList</h1>
+        </header>
+    {% endblock %}
+
+    <main>
+        <ul class="accordion">
+            <li class="accordion-item">
+                <input id="s1" class="hide" type="checkbox">
+                <label for="s1" class="accordion-label">
+                    <img src="{% static 'img/index/lists.png' %}" alt="lists">
+                    <h2>Коллекция списков</h2>
+                    <a href="#"></a>
+                </label>
+
+                {% block collection_of_lists %}
+                {% endblock %}
+
+            </li>
+            <li class="accordion-item">
+                <input id="s2" class="hide" type="checkbox">
+                <label for="s2" class="accordion-label">
+                    <img src="{% static 'img/index/templates.png' %}" alt="templates">
+                    <h2>Шаблоны</h2>
+                    <a href="#"></a>
+                </label>
+
+                {% block templates %}
+                {% endblock %}
+
+                </li>
+            <li class="accordion-item">
+                <input id="s3" class="hide" type="checkbox">
+                <label for="s3" class="accordion-label">
+                    <img src="{% static 'img/index/recipes.png' %}" alt="recipes">
+                    <h2>Рецепты</h2>
+                    <a href="#"></a>
+                </label>
+
+                {% block recipes %}
+                {% endblock %}
+
+            </li>
+        </ul>
+    </main>
+
+    {% block nav %}
+        <div class="nav-clr">
+            <nav>
+                <a href="#" id="nav-home"></a>
+                <a href="#" id="nav-list"></a>
+                <a href="#" id="nav-template"></a>
+                <a href="#" id="nav-recipes"></a>
+                <a href="#" id="nav-settings"></a>
+            </nav>
+        </div>
+    {% endblock %}
+</body>
+
+</html>

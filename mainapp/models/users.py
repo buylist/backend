@@ -47,6 +47,11 @@ class Buyer(AbstractUser):
         max_length=255,
         unique=True,
     )
+    social_id = models.CharField(
+        blank=True,
+        verbose_name='google unique social_id',
+        max_length=255,
+    )
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
@@ -81,37 +86,3 @@ class Buyer(AbstractUser):
                                 error_messages={
                                     'unique': gettext_lazy('A user with that username already exists'),
                                 }, )
-
-
-class Category(models.Model):
-    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
-    name = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-
-
-class Checklist(models.Model):
-    checklist_id = models.IntegerField()
-    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
-    name = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-
-
-class Item(models.Model):
-    item_id = models.IntegerField()
-    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
-    name = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-
-
-class ItemInChecklist(models.Model):
-    checklist = models.ForeignKey(Checklist, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    quantity = models.DecimalField(max_digits=12, decimal_places=4)
-    unit = models.TextField(null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-

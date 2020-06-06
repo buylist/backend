@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700,900&display=swap');
+
+@mixin font ($fontWeight, $fontSize, $fontColor: #37474F) {
+  font-family: 'Roboto', sans-serif;
+  font-weight: $fontWeight;
+  font-size: $fontSize;
+  color: $fontColor;
+}
+
+@mixin flex ($direction, $justify, $align: center, $wrap: nowrap) {
+  display: flex;
+  flex-flow: $direction $wrap;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+}
+
+html, body {height: 100%;}
+
+nav {
+  @include flex(row, space-around);
+  height: 48px;
+  width: 100%;
+  background-color: #F2F2F2;
+  position: fixed;
+  bottom: 0;
+  
+  #nav-home {
+    background-image: url(../img/nav/home-active.png);
+    width: 22px;
+    height: 19px;
+  }
+  #nav-list {
+    background-image: url(../img/nav/list.png);
+    width: 18px;
+    height: 19px;
+  }
+  #nav-template {
+    background-image: url(../img/nav/template.png);
+    width: 19px;
+    height: 19px;
+  }
+  #nav-recipes {
+    background-image: url(../img/nav/recipes.png);
+    width: 21px;
+    height: 19px;
+  }
+  #nav-settings {
+    background-image: url(../img/nav/settings.png);
+    width: 20px;
+    height: 20px;
+  }
+}
+  
+.nav-clr {height: 96px;}
+
+header {
+  @include flex(row, center);
+  padding: 30px 0 60px;
+  img {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+    margin-right: 5px;
+  }
+  h1 {
+    @include font(900, 30px, #2B2D2E)
+  }
+}
+
+.accordion {
+    background: #fff;
+    width: 90%;
+    margin: 0 auto;
+    border-bottom: 1px solid #DADADA;
+    list-style-type: none;
+}
+
+.hide {
+    clip: rect(0 0 0 0);
+    position: absolute;
+}
+
+.accordion-item {
+    position: relative;
+    width: 100%;
+    border-bottom: 1px solid #DADADA;
+    &:last-child{
+        border-bottom: none;
+    }
+}
+
+.accordion-label {
+    @include flex(row, space-between);
+    padding: 20px 30px;
+    font-size: 18px;
+    overflow: hidden;
+    &:hover {
+        cursor: pointer;
+    }
+    img {
+        width: 40px;
+        height: 50px;
+    }
+    h2 {
+        @include font(bold, 28px);
+        width: 50%;
+        max-width: 150px;
+        
+    }
+    h2 + a {
+        background: url(../img/index/add.png) center no-repeat;
+        width: 35px;
+        height: 35px;
+        box-shadow: 0px 4px 4px rgba(136, 136, 136, 0.25);
+        border-radius: 10px;
+    }
+}
+
+.accordion-child {
+    @include font(500, 22px);
+    height: 0;
+    opacity: 0;
+    margin: 0;
+    overflow: hidden;
+    transition: all .3s ease;
+    transform: scale(1);
+    transform-origin: center top;
+    list-style-image: url(../img/index/list-style.png);
+    
+    input[type=checkbox]:checked ~ & {
+        height: auto;
+        opacity: 1;
+        padding: 15px 0 35px 15%;
+        transform: scale(1);
+    }
+    
+    li {
+        margin-bottom: 12px;
+        padding-left: 10px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+        // input[type=checkbox]:checked ~ .list-element-menu{
+        //     display: block;
+        // }
+    }
+
+    .list-element-menu {
+        @include flex(row, space-between);
+        display: none;
+        margin-left: auto;
+        // width: 100px;
+        width: 0;
+    }
+/*
+    .edit {
+        background-image: url(../img/edit.png);
+        background-color: #fff;
+        width: 24px;
+        height: 24px;
+    }
+
+    .delete {
+        background-image: url(../img/delete.png);
+        background-color: #fff;
+        width: 24px;
+        height: 24px;
+    }
+*/
+}

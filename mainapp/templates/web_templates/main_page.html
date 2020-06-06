@@ -1,0 +1,53 @@
+{% extends 'web_templates/base.html' %}
+{% load static %}
+
+{% block collection_of_lists %}
+    <ul class="accordion-child">
+        {% for check in checklists %}
+            <li>
+                <label>
+                    <input type="checkbox" class="hide">
+                    <p>{{check.name}}</p>
+                    <div class="list-element-menu">
+                        <button class="edit"></button>
+                        <button class="delete"></button>
+                    </div>
+                </label>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block templates %}
+    <ul class="accordion-child">
+        {% for pattern in patterns %}
+            <li>
+                <label>
+                    <input type="checkbox" class="hide">
+                    <p>{{pattern.name}}</p>
+                    <div class="list-element-menu">
+                        <button class="edit"></button>
+                        <button class="delete"></button>
+                    </div>
+                </label>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block recipes %}
+    <ul class="accordion-child">
+        {% for reciept in reciepts %}
+            <li>
+                <label>
+                    <input type="checkbox" class="hide">
+                    <p>{{reciept.name}}</p>
+                    <div class="list-element-menu">
+                        <button class="edit"></button>
+                        <button class="delete"></button>
+                    </div>
+                </label>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,13 +1,13 @@
 {
   "DEBUG": true,
-  "SECRET_KEY": "Any secret key",
+  "SECRET_KEY": "Anysecretkey",
   "DATABASES": {
     "default": {
       "ENGINE": "django.db.backends.postgresql",
       "HOST": "localhost",
-      "NAME": "db_name",
-      "USER": "user_name",
-      "PASSWORD": "user_password"
+      "NAME": "buylist",
+      "USER": "gorlov",
+      "PASSWORD": "bananabomba1"
     }
   }
 }
